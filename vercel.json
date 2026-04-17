@@ -1,11 +1,23 @@
 {
   "version": 2,
   "builds": [
-    { "src": "apps/api/index.ts", "use": "@vercel/node" },
-    { "src": "apps/web/package.json", "use": "@vercel/next" }
+    {
+      "src": "apps/web/package.json",
+      "use": "@vercel/next"
+    }
   ],
   "routes": [
-    { "src": "/api/(.*)", "dest": "apps/api/index.ts" },
-    { "src": "/(.*)", "dest": "apps/web/$1" }
-  ]
+    {
+      "src": "/(.*)",
+      "dest": "apps/web/$1"
+    }
+  ],
+  "env": {
+    "NEXT_PUBLIC_API_URL": "@next_public_api_url"
+  },
+  "functions": {
+    "apps/web/src/app/**/*.ts": {
+      "runtime": "@vercel/node"
+    }
+  }
 }

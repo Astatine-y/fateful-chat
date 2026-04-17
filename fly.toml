@@ -1,0 +1,33 @@
+# Fly.io Configuration
+# fly.toml
+
+app = "fateful-chat"
+primary_region = "iad"
+
+[build]
+  builder = "paketobuildpacks/builder:base"
+  buildpacks = ["gcr.io/paketo-buildpacks/nodejs"]
+
+[env]
+  NODE_ENV = "production"
+  PORT = "8080"
+
+[processes]
+  web = "node apps/api/dist/index.js"
+
+[[services]]
+  internal_port = 8080
+  protocol = "tcp"
+
+  [[services.ports]]
+    handlers = ["http"]
+    port = "80"
+
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = "443"
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 256

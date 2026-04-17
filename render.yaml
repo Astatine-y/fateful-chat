@@ -1,0 +1,43 @@
+# Render Configuration
+# render.yaml
+
+services:
+  - type: web
+    name: fateful-chat-api
+    runtime: node
+    buildCommand: "npm install && npm run build --workspace=apps/api"
+    startCommand: "node apps/api/dist/index.js"
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        fromSecret: MONGODB_URI
+      - key: JWT_SECRET
+        fromSecret: JWT_SECRET
+      - key: OPENAI_API_KEY
+        fromSecret: OPENAI_API_KEY
+      - key: STRIPE_SECRET_KEY
+        fromSecret: STRIPE_SECRET_KEY
+      - key: STRIPE_PUBLISHABLE_KEY
+        fromSecret: STRIPE_PUBLISHABLE_KEY
+      - key: STRIPE_WEBHOOK_SECRET
+        fromSecret: STRIPE_WEBHOOK_SECRET
+
+  - type: web
+    name: fateful-chat-web
+    runtime: node
+    buildCommand: "npm install && npm run build --workspace=apps/web"
+    startCommand: "npm start --workspace=apps/web"
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        value: https://fateful-chat-api.onrender.com/api
+      - key: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+        fromSecret: STRIPE_PUBLISHABLE_KEY
+
+databases:
+  - name: fateful-chat-db
+    databaseName: fateful-chat
+    user: fateful-chat-user
+    plan: free
