@@ -11,7 +11,7 @@ const router = Router();
  * Create a Stripe payment intent
  * Authenticated users only
  */
-router.post('/create-intent', auth, async (req: AuthRequest, res: any) => {
+router.post('/create-intent', auth, async (req: AuthRequest<{ amount: number; creditsToAdd: number }>, res: any) => {
   try {
     const { amount, creditsToAdd } = req.body;
 
@@ -51,7 +51,7 @@ router.post('/create-intent', auth, async (req: AuthRequest, res: any) => {
  * Confirm payment and add credits to user
  * Authenticated users only
  */
-router.post('/confirm', auth, async (req: AuthRequest, res: any) => {
+router.post('/confirm', auth, async (req: AuthRequest<{ paymentIntentId: string; creditsToAdd: number }>, res: any) => {
   try {
     const { paymentIntentId, creditsToAdd } = req.body;
 

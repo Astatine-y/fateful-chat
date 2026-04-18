@@ -6,8 +6,8 @@ if (!config.stripe.secretKey) {
   throw new Error('STRIPE_SECRET_KEY is not configured');
 }
 
-const stripe = new Stripe(config.stripe.secretKey, {
-  apiVersion: '2023-10-16',
+const stripe = new Stripe(config.stripe.secretKey as string, {
+  apiVersion: '2023-08-16',
 });
 
 export interface PaymentIntentMetadata {
@@ -24,11 +24,15 @@ export async function createPaymentIntent(
     // Amount should be in cents
     const amountInCents = Math.round(amount * 100);
 
-    const paymentIntent = await stripe.paymentIntents.create({
+    const metadataPayload: Stripe.MetadataParam = {};
+  if (metadata?.userId) metadataPayload.userId = metadata.userId;
+  if (metadata?.creditsToAdd) metadataPayload.creditsToAdd = metadata.creditsToAdd;
+
+  const paymentIntent = await stripe.paymentIntents.create({
       amount: amountInCents,
       currency: 'usd',
       payment_method_types: ['card'],
-      metadata: metadata || {},
+      metadata: metadataPayload,
     });
 
     return paymentIntent;

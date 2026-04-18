@@ -1,8 +1,8 @@
 // apps/api/src/routes/auth.ts
 import { Router } from 'express';
 import User from '../models/User';
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
+import * as jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
 import { config } from '../config';
 import { UserCredentials } from '../types';
 
@@ -41,9 +41,9 @@ router.post('/register', async (req: any, res: any) => {
     });
 
     // Generate token
-    const token = jwt.sign(
+    const token = (jwt as any).sign(
       { id: user._id.toString(), email: user.email },
-      config.jwt.secret,
+      config.jwt.secret as string,
       { expiresIn: config.jwt.expiresIn }
     );
 
@@ -87,9 +87,9 @@ router.post('/login', async (req: any, res: any) => {
     }
 
     // Generate token
-    const token = jwt.sign(
+    const token = (jwt as any).sign(
       { id: user._id.toString(), email: user.email },
-      config.jwt.secret,
+      config.jwt.secret as string,
       { expiresIn: config.jwt.expiresIn }
     );
 

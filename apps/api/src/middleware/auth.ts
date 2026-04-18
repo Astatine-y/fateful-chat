@@ -1,52 +1,33 @@
-// apps/api/src/middleware/auth.ts
+import { Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { config } from '../config';
-import { AuthPayload, AuthRequest } from '../types';
+import { AuthRequest, AuthPayload } from '../types';
 
-export function auth(req: AuthRequest, res: any, next: any): void {
-  const token = req.headers.authorization?.split(' ')[1];
-  
-  if (!token) {
-    res.status(401).json({ error: 'Missing authorization token' });
-    return;
-  }
-
+export const auth = (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const decoded = jwt.verify(token, config.jwt.secret) as AuthPayload;
-    req.user = decoded;
-    next();
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      return res.status(401).json({ error: 'No authorization header provided' });
+    }
+    const parts = authHeader.split(' ');
+    if (parts.length !== 2 || parts[0] !== 'Bearer') {
+      return res.status(401).json({ error: 'Invalid authorization header format' });
+    }
+    const token = parts[1];
+    try {
+      const decoded = (jwt as any).verify(token, config.jwt.secret as string) as AuthPayload;
+      req.user = decoded;
+      next();
+    } catch (error) {
+      if (error instanceof jwt.TokenExpiredError) {
+        return res.status(401).json({ error: 'Token has expired' });
+      }
+      return res.status(401).json({ error: 'Invalid token' });
+    }
   } catch (error) {
-    const message = error instanceof jwt.TokenExpiredError 
-      ? 'Token expired' 
-      : error instanceof jwt.JsonWebTokenError
-      ? 'Invalid token'
-      : 'Unauthorized';
-    res.status(401).json({ error: message });
+    console.error('Auth middleware error:', error);
+    res.status(500).json({ error: 'Authentication error' });
   }
-}
+};
 
-// apps/api/src/routes/auth.ts
-import { Router } from 'express';
-import User from '../models/User';
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
-
-const router = Router();
-
-router.post('/register', async (req, res) => {
-  const { email, password } = req.body;
-  const hashed = await bcrypt.hash(password, 10);
-  const user = await User.create({ email, password: hashed });
-  res.json({ token: jwt.sign({ id: user._id }, 'secret') });
-});
-
-router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
-  const user = await User.findOne({ email });
-  if (!user || !(await bcrypt.compare(password, user.password))) {
-    return res.status(401).json({ error: 'Invalid creds' });
-  }
-  res.json({ token: jwt.sign({ id: user._id }, 'secret') });
-});
-
-export default router;
+export default auth;

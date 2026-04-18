@@ -1,23 +1,8 @@
-# Railway Configuration
-# railway.toml
-
 [build]
-builder = "dockerfile"
-dockerfilePath = "./Dockerfile.api"
+builder = "NIXPACKS"
 
 [deploy]
-startCommand = "node apps/api/dist/index.js"
-healthcheckPath = "/health"
-healthcheckTimeout = 300
-restartPolicyType = "ON_FAILURE"
-restartPolicyMaxRetries = 10
-
-[environments]
-[environments.production]
-NODE_ENV = "production"
-PORT = "8080"
-MONGODB_URI = "${{ MONGODB_URI }}"
-JWT_SECRET = "${{ JWT_SECRET }}"
+startCommand = "cd apps/api && npm start"
 OPENAI_API_KEY = "${{ OPENAI_API_KEY }}"
 STRIPE_SECRET_KEY = "${{ STRIPE_SECRET_KEY }}"
 STRIPE_PUBLISHABLE_KEY = "${{ STRIPE_PUBLISHABLE_KEY }}"

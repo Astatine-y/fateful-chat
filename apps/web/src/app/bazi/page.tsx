@@ -382,29 +382,4 @@ export default function BaziPage() {
     </div>
   );
 }
-  // 1. 支付
-  const { clientSecret } = await fetch('/api/create-payment-intent', {
-    method: 'POST',
-    body: JSON.stringify({ amount: 1000 }),
-  }).then((res) => res.json());
-  const { paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
-    payment_method: {
-      card: elements.getElement(CardElement),
-    },
-  });
-  // 2. 调用八字 API
-  const res = await fetch('/api/bazi', {
-    method: 'POST',
-    body: JSON.stringify({
-      year,
-      month,
-      day,
-      hour,
-      longitude,
-      latitude,
-      paymentId: paymentIntent.id,
-    }),
-  });
-  const data = await res.json();
-  setResult(data);
-};
+

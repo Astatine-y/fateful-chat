@@ -58,14 +58,29 @@ app.use((err: any, req: Request, res: Response, next: any) => {
   });
 });
 
-// Database connection
-async function connectDatabase() {
-  try {
-    await mongoose.connect(config.database.url);
-    console.log('✅ Connected to MongoDB');
-  } catch (error) {
-    console.error('❌ MongoDB connection error:', error);
-    process.exit(1);
+// Database connection with retry logic
+async function connectDatabase(retries = 5) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      await mongoose.connect(config.database.url, {
+        serverSelectionTimeoutMS: 5000,
+        socketTimeoutMS: 45000,
+        retryWrites: true,
+        w: 'majority',
+      });
+      console.log('✅ Connected to MongoDB');
+      return;
+    } catch (error) {
+      console.error(`❌ MongoDB connection attempt ${i + 1}/${retries} failed:`, error);
+      if (i < retries - 1) {
+        const waitTime = Math.pow(2, i) * 1000; // Exponential backoff
+        console.log(`⏳ Retrying in ${waitTime / 1000}s...`);
+        await new Promise(resolve => setTimeout(resolve, waitTime));
+      } else {
+        console.error('❌ Failed to connect to MongoDB after all retry attempts');
+        process.exit(1);
+      }
+    }
   }
 }
 

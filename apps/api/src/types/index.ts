@@ -1,4 +1,5 @@
-// apps/api/src/types/index.ts
+import type { Request } from 'express';
+
 export interface AuthPayload {
   id: string;
   email: string;
@@ -19,10 +20,12 @@ export interface BaziRequest {
   latitude: number;
 }
 
-export interface AuthRequest extends Express.Request {
+export interface AuthRequest<T = any> extends Request {
   user?: AuthPayload;
+  body: T;
 }
 
 export interface PaymentIntentRequest {
   amount: number;
 }
+

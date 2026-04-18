@@ -1,6 +1,13 @@
 import { OpenAI } from 'openai';
 import { config } from '../config';
-import { BaziResult } from 'bazi-core';
+
+interface BaziResult {
+  year: string;
+  month: string;
+  day: string;
+  hour: string;
+}
+
 
 if (!config.openai.apiKey) {
   throw new Error('OPENAI_API_KEY is not configured');

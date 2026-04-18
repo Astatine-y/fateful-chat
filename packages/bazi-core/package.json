@@ -1,0 +1,13 @@
+{
+  "name": "@fateful-chat/bazi-core",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "python -m pytest tests/"
+  },
+  "devDependencies": {
+    "@types/node": "^20.5.0",
+    "typescript": "^5.1.6"
+  }
+}

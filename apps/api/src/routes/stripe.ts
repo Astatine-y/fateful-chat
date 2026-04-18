@@ -11,8 +11,8 @@ if (!config.stripe.secretKey || !config.stripe.webhookSecret) {
   console.warn('Stripe webhook secret not configured');
 }
 
-const stripe = new Stripe(config.stripe.secretKey, {
-  apiVersion: '2023-10-16',
+const stripe = new Stripe(config.stripe.secretKey as string, {
+  apiVersion: '2023-08-16',
 });
 
 /**
@@ -33,8 +33,8 @@ router.post(
     try {
       const event = stripe.webhooks.constructEvent(
         req.body,
-        sig,
-        config.stripe.webhookSecret
+        sig as string,
+        config.stripe.webhookSecret as string
       );
 
       // Handle different event types
