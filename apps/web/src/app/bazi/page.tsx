@@ -29,19 +29,29 @@ function BaziForm() {
   const [result, setResult] = useState<BaziResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showCta, setShowCta] = useState(false);
+  const [showEmailCapture, setShowEmailCapture] = useState(false);
+  const [emailCapture, setEmailCapture] = useState('');
+  const [emailCaptured, setEmailCaptured] = useState(false);
+
+  const isLoggedIn = typeof window !== 'undefined' && !!localStorage.getItem('token');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    setShowCta(false);
 
     try {
+      const token = localStorage.getItem('token');
+      const headers: HeadersInit = { 'Content-Type': 'application/json' };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
       const response = await fetch('/api/bazi', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
+        headers,
         body: JSON.stringify({
           year: parseInt(year, 10),
           month: parseInt(month, 10),
@@ -52,13 +62,19 @@ function BaziForm() {
         }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to calculate bazi');
+        if (response.status === 429 && data.upgrade) {
+          setShowCta(true);
+        }
+        throw new Error(data.error || 'Failed to calculate bazi');
       }
 
-      const data = await response.json();
       setResult(data.data);
+      if (data.data?.freeDaily && !isLoggedIn) {
+        setShowEmailCapture(true);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -127,11 +143,17 @@ function BaziForm() {
           />
         </div>
         <button type="submit" disabled={loading}>
-          {loading ? '计算中...' : '计算八字'}
+          {loading ? '计算中...' : '计算八字 (免费每日1次)'}
         </button>
       </form>
 
       {error && <div className="error">{error}</div>}
+      {showCta && (
+        <div className="cta">
+          <p>今日免费次数已用完</p>
+          <a href="/auth/register" className="cta-button">创建账户获取5免费积分</a>
+        </div>
+      )}
 
       {result && (
         <div className="result">
@@ -155,6 +177,54 @@ function BaziForm() {
             <p>{result.interpretation}</p>
           </div>
           <p className="credits">剩余次数：{result.creditsRemaining}</p>
+          {showEmailCapture && !emailCaptured && (
+            <div className="email-capture">
+              <p>保存你的解读？输入邮箱保存结果</p>
+              <form onSubmit={async (e) => {
+                e.preventDefault();
+                try {
+                  const res = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                      email: emailCapture, 
+                      password: Math.random().toString(36).slice(-12) 
+                    }),
+                  });
+                  if (res.ok) {
+                    const data = await res.json();
+                    localStorage.setItem('token', data.token);
+                    setEmailCaptured(true);
+                    alert('已创建账户并保存你的解读！');
+                  }
+                } catch {
+                  alert('保存失败，请重试');
+                }
+              }}>
+                <input
+                  type="email"
+                  value={emailCapture}
+                  onChange={(e) => setEmailCapture(e.target.value)}
+                  placeholder="输入邮箱"
+                  required
+                />
+                <button type="submit">保存</button>
+              </form>
+            </div>
+          )}
+          <div className="share-buttons">
+            <button type="button" onClick={() => {
+              const text = `我的八字：${result.bazi.year}年 ${result.bazi.month}月 ${result.bazi.day}日 ${result.bazi.hour}时\n用Fateful Chat查看你的八字！`;
+              if (navigator.share) {
+                navigator.share({ text });
+              } else {
+                navigator.clipboard.writeText(text);
+                alert('已复制到剪贴板！');
+              }
+            }} className="share-btn">
+              分享结果
+            </button>
+          </div>
         </div>
       )}
     </div>
@@ -377,6 +447,80 @@ export default function BaziPage() {
         .credits {
           font-weight: bold;
           margin-top: 10px;
+        }
+
+        .cta {
+          margin-top: 15px;
+          padding: 20px;
+          background: #fff7ed;
+          border-radius: 8px;
+          text-align: center;
+        }
+
+        .cta p {
+          margin-bottom: 12px;
+          color: #9a3412;
+        }
+
+        .cta-button {
+          display: inline-block;
+          padding: 12px 24px;
+          background: #ea580c;
+          color: white;
+          border-radius: 6px;
+          text-decoration: none;
+          font-weight: 600;
+        }
+
+        .share-buttons {
+          margin-top: 16px;
+          display: flex;
+          gap: 12px;
+        }
+
+        .share-btn {
+          padding: 10px 20px;
+          background: #10b981;
+          color: white;
+          border: none;
+          border-radius: 6px;
+          font-size: 0.875rem;
+          cursor: pointer;
+        }
+
+        .email-capture {
+          margin-top: 16px;
+          padding: 16px;
+          background: #f0f9ff;
+          border-radius: 8px;
+          text-align: center;
+        }
+
+        .email-capture p {
+          margin-bottom: 12px;
+          color: #0369a1;
+          font-size: 0.875rem;
+        }
+
+        .email-capture form {
+          display: flex;
+          gap: 8px;
+        }
+
+        .email-capture input {
+          flex: 1;
+          padding: 8px 12px;
+          border: 1px solid #bae6fd;
+          border-radius: 6px;
+        }
+
+        .email-capture button {
+          padding: 8px 16px;
+          background: #0284c7;
+          color: white;
+          border: none;
+          border-radius: 6px;
+          cursor: pointer;
         }
       `}</style>
     </div>

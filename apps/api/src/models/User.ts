@@ -4,7 +4,15 @@ import { Schema, model, Document } from 'mongoose';
 export interface IUser extends Document {
   email: string;
   password: string;
+  name?: string;
   credits: number;
+  isSubscribed?: boolean;
+  subscriptionPlan?: string;
+  subscriptionExpiresAt?: Date;
+  stripeSubscriptionId?: string;
+  referralCode?: string;
+  referredBy?: string;
+  referralCount?: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -28,6 +36,35 @@ const userSchema = new Schema<IUser>(
       type: Number,
       default: 0,
       min: [0, 'Credits cannot be negative'],
+    },
+    isSubscribed: {
+      type: Boolean,
+      default: false,
+    },
+    subscriptionPlan: {
+      type: String,
+      enum: ['monthly', 'yearly', null],
+      default: null,
+    },
+    subscriptionExpiresAt: {
+      type: Date,
+      default: null,
+    },
+    stripeSubscriptionId: {
+      type: String,
+      default: null,
+    },
+    referralCode: {
+      type: String,
+      unique: true,
+    },
+    referredBy: {
+      type: String,
+      default: null,
+    },
+    referralCount: {
+      type: Number,
+      default: 0,
     },
   },
   {

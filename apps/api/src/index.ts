@@ -2,6 +2,7 @@
 import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
 import { config } from './config';
 
@@ -11,6 +12,12 @@ import baziRoutes from './routes/bazi';
 import paymentRoutes from './routes/payment';
 import userRoutes from './routes/user';
 import stripeRoutes from './routes/stripe';
+import subscriptionRoutes from './routes/subscription';
+import referralRoutes from './routes/referral';
+import analyticsRoutes from './routes/analytics';
+import historyRoutes from './routes/history';
+import adminRoutes from './routes/admin';
+import { rateLimit } from './middleware/rateLimit';
 
 const app: Express = express();
 
@@ -24,8 +31,12 @@ app.use(
 );
 
 // Body parser middleware (must be before stripe webhook)
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Rate limiting for API routes
+app.use('/api', rateLimit);
 
 // Health check endpoint
 app.get('/health', (req: Request, res: Response) => {
@@ -44,6 +55,11 @@ app.use('/api/auth', authRoutes);
 app.use('/api/bazi', baziRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/subscription', subscriptionRoutes);
+app.use('/api/referral', referralRoutes);
+app.use('/api/analytics', analyticsRoutes);
+app.use('/api/history', historyRoutes);
+app.use('/api/admin', adminRoutes);
 
 // 404 handler
 app.use((req: Request, res: Response) => {
