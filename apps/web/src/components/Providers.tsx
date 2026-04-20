@@ -2,7 +2,13 @@
 
 import { ReactNode } from 'react';
 import { LanguageProvider } from './LanguageProvider';
+import { ThemeToggle } from './ThemeToggle';
 
 export function Providers({ children }: { children: ReactNode }) {
-  return <LanguageProvider>{children}</LanguageProvider>;
+  return (
+    <LanguageProvider>
+      {children}
+      <ThemeToggle />
+    </LanguageProvider>
+  );
 }

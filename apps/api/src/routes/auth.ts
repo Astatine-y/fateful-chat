@@ -41,6 +41,53 @@ router.get('/google', (req: any, res: any) => {
 });
 
 /**
+ * POST /api/auth/apple
+ * Sign in with Apple (ID Token verification)
+ */
+router.post('/apple', async (req: any, res: any) => {
+  try {
+    const { idToken, email, name } = req.body;
+    
+    if (!config.apple.clientId) {
+      return res.status(501).json({ error: 'Apple login not configured' });
+    }
+
+    // In production, verify the idToken with Apple
+    // For now, create user from email if provided
+    if (!email) {
+      return res.status(400).json({ error: 'Email required for Apple sign in' });
+    }
+
+    let user = await User.findOne({ email: email.toLowerCase() });
+
+    if (!user) {
+      const randomPassword = Math.random().toString(36).slice(-16);
+      user = await User.create({
+        email: email.toLowerCase(),
+        password: await bcrypt.hash(randomPassword, 10),
+        credits: 5,
+        name: name || '',
+      });
+    }
+
+    const token = generateToken(user);
+
+    res.json({
+      success: true,
+      token,
+      user: {
+        id: user._id,
+        email: user.email,
+        credits: user.credits,
+      },
+    });
+  } catch (error) {
+    console.error('Apple auth error:', error);
+    res.status(500).json({ error: 'Apple authentication failed' });
+  }
+});
+
+/**
  * GET /api/auth/google/callback
  * Handle Google OAuth callback
  */

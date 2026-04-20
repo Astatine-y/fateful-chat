@@ -17,6 +17,13 @@ export const config = {
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackUrl: process.env.GOOGLE_CALLBACK_URL || 'http://localhost:5000/api/auth/google/callback',
   },
+  apple: {
+    clientId: process.env.APPLE_CLIENT_ID,
+    clientSecret: process.env.APPLE_CLIENT_SECRET,
+    callbackUrl: process.env.APPLE_CALLBACK_URL || 'http://localhost:5000/api/auth/apple/callback',
+    teamId: process.env.APPLE_TEAM_ID,
+    keyId: process.env.APPLE_KEY_ID,
+  },
   database: {
     url: process.env.MONGODB_URI || 'mongodb://localhost:27017/fateful-chat',
   },

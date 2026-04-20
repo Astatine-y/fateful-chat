@@ -33,5 +33,7 @@
   "delete_calculation": "Xóa tính toán",
   "export": "Xuất",
   "share": "Chia sẻ",
-  "loading_interpretation": "Đang tải giải thích..."
+  "loading_interpretation": "Đang tải giải thích...",
+  "free_daily": "Miễn phí 1 lần/ngày",
+  "share_result": "Chia sẻ kết quả"
 }

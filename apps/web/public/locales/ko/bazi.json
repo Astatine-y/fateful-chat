@@ -1,0 +1,22 @@
+{
+  "bazi": "八字",
+  "start_calculation": "八字 진단 시작",
+  "bazi_calculation": "八字 진단",
+  "birth_date": "생년월일",
+  "year": "년",
+  "month": "월",
+  "day": "일",
+  "hour": "시",
+  "calculate": "진단하기",
+  "analyzing": "분석 중...",
+  "result": "결과",
+  "interpretation": "해석",
+  "four_pillars": "사주",
+  "year_pillar": "년주",
+  "month_pillar": "월주",
+  "day_pillar": "일주",
+  "hour_pillar": "시주",
+  "element": "오행",
+  "free_daily": "무료 1일 1회",
+  "share_result": "결과 공유"
+}
