@@ -30,11 +30,8 @@ jobs:
       - name: Build Project
         run: npm run build --workspace=apps/web
         
-      - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v25
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-args: '--prod'
-          vercel-project-name: 'fateful-chat'
-          vercel-org-id: 'team_${{ secrets.VERCEL_ORG_ID }}'
-          vercel-production-environment: 'Production'
+      - name: Vercel Deploy
+        run: |
+          npm i -g vercel@latest
+          vercel --prod --token=${{ secrets.VERCEL_TOKEN }} --yes
+        working-directory: apps/web
