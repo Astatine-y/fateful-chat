@@ -5,11 +5,11 @@ interface LogoProps {
   showText?: boolean;
 }
 
-export function Logo({ size = 'md', showText = true }: LogoProps) {
+export function Logo({ size = 'lg', showText = true }: LogoProps) {
   const sizes = {
-    sm: { container: 32, symbol: 20 },
-    md: { container: 48, symbol: 28 },
-    lg: { container: 64, symbol: 36 }
+    sm: { container: 40, symbol: 24 },
+    md: { container: 56, symbol: 32 },
+    lg: { container: 72, symbol: 40 }
   };
   
   const s = sizes[size];
