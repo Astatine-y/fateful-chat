@@ -21,12 +21,6 @@ jobs:
           
       - name: Install dependencies
         run: npm ci
-        
-      - name: Lint
-        run: npm run lint 2>/dev/null || true
-        
+
       - name: Build
         run: npm run build
-        
-      - name: Typecheck
-        run: npx tsc --noEmit 2>/dev/null || true
