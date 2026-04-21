@@ -36,9 +36,27 @@ services:
       MONGODB_URI: mongodb://admin:password@mongodb:27017/fateful-chat?authSource=admin
       JWT_SECRET: ${JWT_SECRET:-dev-secret-key-change-in-production}
       OPENAI_API_KEY: ${OPENAI_API_KEY}
+      
+      # Stripe
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
       STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
       STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      STRIPE_MONTHLY_PRICE_ID: ${STRIPE_MONTHLY_PRICE_ID}
+      STRIPE_YEARLY_PRICE_ID: ${STRIPE_YEARLY_PRICE_ID}
+      
+      # Google OAuth
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      GOOGLE_CALLBACK_URL: http://localhost:5000/api/auth/google/callback
+      
+      # Apple OAuth
+      APPLE_CLIENT_ID: ${APPLE_CLIENT_ID}
+      APPLE_CLIENT_SECRET: ${APPLE_CLIENT_SECRET}
+      APPLE_TEAM_ID: ${APPLE_TEAM_ID}
+      APPLE_KEY_ID: ${APPLE_KEY_ID}
+      
+      # Frontend
+      FRONTEND_URL: http://localhost:3000
     depends_on:
       mongodb:
         condition: service_healthy

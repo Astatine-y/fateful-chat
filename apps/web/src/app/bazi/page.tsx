@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { useStripe, useElements, CardElement, Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 
@@ -24,8 +25,9 @@ function BaziForm() {
   const [month, setMonth] = useState('');
   const [day, setDay] = useState('');
   const [hour, setHour] = useState('');
-  const [longitude, setLongitude] = useState('');
-  const [latitude, setLatitude] = useState('');
+  const [gender, setGender] = useState<'male' | 'female'>('male');
+  const [longitude, setLongitude] = useState('120');
+  const [latitude, setLatitude] = useState('30');
   const [result, setResult] = useState<BaziResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -59,6 +61,7 @@ function BaziForm() {
           hour: parseInt(hour, 10),
           longitude: parseFloat(longitude),
           latitude: parseFloat(latitude),
+          gender,
         }),
       });
 
@@ -82,424 +85,557 @@ function BaziForm() {
     }
   };
 
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 100 }, (_, i) => currentYear - 99 + i);
+  const months = Array.from({ length: 12 }, (_, i) => i + 1);
+  const days = Array.from({ length: 31 }, (_, i) => i + 1);
+  const hours = Array.from({ length: 24 }, (_, i) => i);
+
   return (
-    <div className="bazi-form">
-      <h2>八字计算</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <input
-            type="number"
-            value={year}
-            onChange={(e) => setYear(e.target.value)}
-            placeholder="出生年份"
-            required
-          />
-          <input
-            type="number"
-            value={month}
-            onChange={(e) => setMonth(e.target.value)}
-            placeholder="出生月份 (1-12)"
-            min="1"
-            max="12"
-            required
-          />
-          <input
-            type="number"
-            value={day}
-            onChange={(e) => setDay(e.target.value)}
-            placeholder="出生日期 (1-31)"
-            min="1"
-            max="31"
-            required
-          />
-          <input
-            type="number"
-            value={hour}
-            onChange={(e) => setHour(e.target.value)}
-            placeholder="出生时辰 (0-23)"
-            min="0"
-            max="23"
-            required
-          />
-          <input
-            type="number"
-            step="0.01"
-            value={longitude}
-            onChange={(e) => setLongitude(e.target.value)}
-            placeholder="出生地经度"
-            min="-180"
-            max="180"
-            required
-          />
-          <input
-            type="number"
-            step="0.01"
-            value={latitude}
-            onChange={(e) => setLatitude(e.target.value)}
-            placeholder="出生地纬度"
-            min="-90"
-            max="90"
-            required
-          />
-        </div>
-        <button type="submit" disabled={loading}>
-          {loading ? '计算中...' : '计算八字 (免费每日1次)'}
-        </button>
-      </form>
+    <div className="bazi-page">
+      <nav className="nav-bar">
+        <Link href="/" className="nav-logo">☯ FATEFUL</Link>
+        <Link href="/dashboard" className="nav-link">控制台</Link>
+      </nav>
 
-      {error && <div className="error">{error}</div>}
-      {showCta && (
-        <div className="cta">
-          <p>今日免费次数已用完</p>
-          <a href="/auth/register" className="cta-button">创建账户获取5免费积分</a>
-        </div>
-      )}
+      <div className="bazi-container">
+        <div className="form-section">
+          <div className="section-header">
+            <div className="symbol">☰</div>
+            <h1>生命代码解析</h1>
+            <p className="subtitle">Life Code Analysis</p>
+          </div>
 
-      {result && (
-        <div className="result">
-          <h3>八字结果</h3>
-          <div className="bazi-data">
-            <p>
-              <strong>年柱：</strong> {result.bazi.year}
-            </p>
-            <p>
-              <strong>月柱：</strong> {result.bazi.month}
-            </p>
-            <p>
-              <strong>日柱：</strong> {result.bazi.day}
-            </p>
-            <p>
-              <strong>时柱：</strong> {result.bazi.hour}
-            </p>
-          </div>
-          <div className="interpretation">
-            <h4>AI解读</h4>
-            <p>{result.interpretation}</p>
-          </div>
-          <p className="credits">剩余次数：{result.creditsRemaining}</p>
-          {showEmailCapture && !emailCaptured && (
-            <div className="email-capture">
-              <p>保存你的解读？输入邮箱保存结果</p>
-              <form onSubmit={async (e) => {
-                e.preventDefault();
-                try {
-                  const res = await fetch('/api/auth/register', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                      email: emailCapture, 
-                      password: Math.random().toString(36).slice(-12) 
-                    }),
-                  });
-                  if (res.ok) {
-                    const data = await res.json();
-                    localStorage.setItem('token', data.token);
-                    setEmailCaptured(true);
-                    alert('已创建账户并保存你的解读！');
-                  }
-                } catch {
-                  alert('保存失败，请重试');
-                }
-              }}>
-                <input
-                  type="email"
-                  value={emailCapture}
-                  onChange={(e) => setEmailCapture(e.target.value)}
-                  placeholder="输入邮箱"
-                  required
-                />
-                <button type="submit">保存</button>
-              </form>
+          <form onSubmit={handleSubmit} className="cosmic-form">
+            <div className="input-row">
+              <div className="input-group">
+                <label>出生年份</label>
+                <select value={year} onChange={(e) => setYear(e.target.value)} required>
+                  <option value="">选择年份</option>
+                  {years.map(y => <option key={y} value={y}>{y}</option>)}
+                </select>
+              </div>
+              <div className="input-group">
+                <label>出生月份</label>
+                <select value={month} onChange={(e) => setMonth(e.target.value)} required>
+                  <option value="">选择月份</option>
+                  {months.map(m => <option key={m} value={m}>{m}月</option>)}
+                </select>
+              </div>
+            </div>
+
+            <div className="input-row">
+              <div className="input-group">
+                <label>出生日期</label>
+                <select value={day} onChange={(e) => setDay(e.target.value)} required>
+                  <option value="">选择日期</option>
+                  {days.map(d => <option key={d} value={d}>{d}日</option>)}
+                </select>
+              </div>
+              <div className="input-group">
+                <label>出生时辰</label>
+                <select value={hour} onChange={(e) => setHour(e.target.value)} required>
+                  <option value="">选择时辰</option>
+                  {hours.map(h => <option key={h} value={h}>{h}:00</option>)}
+                </select>
+              </div>
+            </div>
+
+            <div className="input-row single">
+              <div className="input-group gender">
+                <label>性别</label>
+                <div className="gender-toggle">
+                  <button
+                    type="button"
+                    className={gender === 'male' ? 'active' : ''}
+                    onClick={() => setGender('male')}
+                  >
+                    <span className="gender-icon">♂</span>
+                    <span>男</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={gender === 'female' ? 'active' : ''}
+                    onClick={() => setGender('female')}
+                  >
+                    <span className="gender-icon">♀</span>
+                    <span>女</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" className="btn-submit" disabled={loading}>
+              {loading ? (
+                <span className="loading">解析中...</span>
+              ) : (
+                <>
+                  <span className="zh">开启生命密码</span>
+                  <span className="en">Reveal Your Code</span>
+                </>
+              )}
+            </button>
+          </form>
+
+          {error && <div className="error-message">{error}</div>}
+          
+          {showCta && (
+            <div className="cta-banner">
+              <p>今日免费次数已用完</p>
+              <Link href="/auth/register" className="cta-button">创建账户获取5免费积分</Link>
             </div>
           )}
-          <div className="share-buttons">
-            <button type="button" onClick={() => {
-              const text = `我的八字：${result.bazi.year}年 ${result.bazi.month}月 ${result.bazi.day}日 ${result.bazi.hour}时\n用Fateful Chat查看你的八字！`;
+        </div>
+
+        {result && (
+          <div className="result-section">
+            <div className="four-pillars">
+              <h2 className="pillars-title">
+                <span className="zh">四柱八字</span>
+                <span className="en">Four Pillars</span>
+              </h2>
+              
+              <div className="pillars-grid">
+                <div className="pillar year">
+                  <div className="pillar-label">年柱</div>
+                  <div className="pillar-value">{result.bazi.year}</div>
+                  <div className="pillar-en">Year Pillar</div>
+                </div>
+                <div className="pillar month">
+                  <div className="pillar-label">月柱</div>
+                  <div className="pillar-value">{result.bazi.month}</div>
+                  <div className="pillar-en">Month Pillar</div>
+                </div>
+                <div className="pillar day">
+                  <div className="pillar-label">日柱</div>
+                  <div className="pillar-value">{result.bazi.day}</div>
+                  <div className="pillar-en">Day Pillar</div>
+                </div>
+                <div className="pillar hour">
+                  <div className="pillar-label">时柱</div>
+                  <div className="pillar-value">{result.bazi.hour}</div>
+                  <div className="pillar-en">Hour Pillar</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="ai-interpretation">
+              <div className="ai-header">
+                <span className="ai-icon">◈</span>
+                <h3>AI智能解读</h3>
+                <span className="ai-badge">Neural Interpretation</span>
+              </div>
+              <div className="interpretation-content">
+                <p>{result.interpretation}</p>
+              </div>
+            </div>
+
+            <div className="credits-info">
+              <span>剩余积分: {result.creditsRemaining}</span>
+            </div>
+
+            {showEmailCapture && !emailCaptured && (
+              <div className="email-capture">
+                <p>保存你的解读？</p>
+                <form onSubmit={async (e) => {
+                  e.preventDefault();
+                  try {
+                    const res = await fetch('/api/auth/register', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ 
+                        email: emailCapture, 
+                        password: Math.random().toString(36).slice(-12) 
+                      }),
+                    });
+                    if (res.ok) {
+                      const data = await res.json();
+                      localStorage.setItem('token', data.token);
+                      setEmailCaptured(true);
+                    }
+                  } catch {}
+                }}>
+                  <input
+                    type="email"
+                    value={emailCapture}
+                    onChange={(e) => setEmailCapture(e.target.value)}
+                    placeholder="输入邮箱保存结果"
+                    required
+                  />
+                  <button type="submit">保存</button>
+                </form>
+              </div>
+            )}
+
+            <button className="share-btn" onClick={() => {
+              const text = `我的八字：${result.bazi.year}年 ${result.bazi.month}月 ${result.bazi.day}日 ${result.bazi.hour}时\n用FATEFUL查看你的八字！`;
               if (navigator.share) {
                 navigator.share({ text });
               } else {
                 navigator.clipboard.writeText(text);
-                alert('已复制到剪贴板！');
               }
-            }} className="share-btn">
+            }}>
               分享结果
             </button>
           </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function PaymentForm() {
-  const stripe = useStripe();
-  const elements = useElements();
-  const [amount, setAmount] = useState('10');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!stripe || !elements) {
-      setError('Stripe not loaded');
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      // Create payment intent
-      const intentResponse = await fetch('/api/payment/create-intent', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify({
-          amount: parseFloat(amount),
-          creditsToAdd: Math.floor(parseFloat(amount) / 2), // $2 per credit
-        }),
-      });
-
-      if (!intentResponse.ok) {
-        throw new Error('Failed to create payment intent');
-      }
-
-      const { clientSecret } = await intentResponse.json();
-
-      // Confirm payment
-      const { error: paymentError } = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: {
-          card: elements.getElement(CardElement)!,
-        },
-      });
-
-      if (paymentError) {
-        setError(paymentError.message || 'Payment failed');
-      } else {
-        setSuccess(true);
-        setAmount('10');
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <div className="payment-form">
-      <h2>充值积分</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>金额 (USD)：</label>
-          <input
-            type="number"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            placeholder="金额"
-            min="1"
-            step="0.01"
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>卡片信息：</label>
-          <CardElement />
-        </div>
-        <button type="submit" disabled={!stripe || loading}>
-          {loading ? '处理中...' : '支付'}
-        </button>
-      </form>
-
-      {error && <div className="error">{error}</div>}
-      {success && <div className="success">支付成功！积分已添加。</div>}
-    </div>
-  );
-}
-
-export default function BaziPage() {
-  const [activeTab, setActiveTab] = useState<'bazi' | 'payment'>('bazi');
-
-  return (
-    <div className="bazi-page">
-      <h1>八字解读系统</h1>
-      <div className="tabs">
-        <button
-          className={`tab ${activeTab === 'bazi' ? 'active' : ''}`}
-          onClick={() => setActiveTab('bazi')}
-        >
-          八字计算
-        </button>
-        <button
-          className={`tab ${activeTab === 'payment' ? 'active' : ''}`}
-          onClick={() => setActiveTab('payment')}
-        >
-          充值
-        </button>
-      </div>
-
-      <div className="tab-content">
-        {activeTab === 'bazi' ? (
-          <BaziForm />
-        ) : (
-          <Elements stripe={stripePromise}>
-            <PaymentForm />
-          </Elements>
         )}
       </div>
 
       <style jsx>{`
         .bazi-page {
+          min-height: 100vh;
+          padding: 24px;
+          position: relative;
+        }
+
+        .nav-bar {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 16px 24px;
+          margin: -24px -24px 40px;
+          background: rgba(3, 0, 20, 0.8);
+          backdrop-filter: blur(10px);
+          border-bottom: 1px solid var(--border);
+        }
+
+        .nav-logo {
+          font-family: var(--font-display);
+          font-size: 1.25rem;
+          color: var(--cosmic-gold);
+          text-decoration: none;
+          letter-spacing: 0.1rem;
+        }
+
+        .nav-link {
+          color: var(--foreground);
+          text-decoration: none;
+          font-size: 0.9rem;
+          opacity: 0.7;
+          transition: opacity 0.3s;
+        }
+
+        .nav-link:hover {
+          opacity: 1;
+        }
+
+        .bazi-container {
           max-width: 800px;
           margin: 0 auto;
-          padding: 20px;
         }
 
-        .tabs {
-          display: flex;
-          gap: 10px;
-          margin: 20px 0;
+        .form-section {
+          margin-bottom: 48px;
         }
 
-        .tab {
-          padding: 10px 20px;
-          border: none;
-          background: #f0f0f0;
-          cursor: pointer;
-          border-radius: 4px;
-          transition: background 0.3s;
+        .section-header {
+          text-align: center;
+          margin-bottom: 40px;
         }
 
-        .tab.active {
-          background: #0070f3;
-          color: white;
+        .symbol {
+          font-size: 2.5rem;
+          color: var(--cosmic-gold);
+          margin-bottom: 16px;
         }
 
-        .form-group {
+        .section-header h1 {
+          font-family: var(--font-display);
+          font-size: 2rem;
+          color: var(--foreground);
+          margin-bottom: 8px;
+        }
+
+        .subtitle {
+          font-size: 0.9rem;
+          opacity: 0.6;
+        }
+
+        .cosmic-form {
+          background: rgba(26, 22, 53, 0.6);
+          border: 1px solid var(--border);
+          border-radius: 24px;
+          padding: 32px;
+        }
+
+        .input-row {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 20px;
+          margin-bottom: 20px;
+        }
+
+        .input-row.single {
+          grid-template-columns: 1fr;
+        }
+
+        .input-group {
           display: flex;
           flex-direction: column;
-          gap: 10px;
-          margin: 15px 0;
+          gap: 8px;
         }
 
-        .form-group input {
-          padding: 10px;
-          border: 1px solid #ddd;
-          border-radius: 4px;
+        .input-group label {
+          font-size: 0.85rem;
+          color: var(--muted-foreground);
         }
 
-        button {
-          padding: 10px 20px;
-          background: #0070f3;
-          color: white;
-          border: none;
-          border-radius: 4px;
+        .input-group select {
+          padding: 14px 16px;
+          background: rgba(3, 0, 20, 0.5);
+          border: 1px solid var(--border);
+          border-radius: 12px;
+          color: var(--foreground);
+          font-size: 1rem;
           cursor: pointer;
-          font-size: 14px;
+          transition: border-color 0.3s;
         }
 
-        button:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
+        .input-group select:focus {
+          outline: none;
+          border-color: var(--accent);
         }
 
-        .error {
-          color: red;
-          padding: 10px;
-          background: #ffe6e6;
-          border-radius: 4px;
-          margin: 10px 0;
-        }
-
-        .success {
-          color: green;
-          padding: 10px;
-          background: #e6ffe6;
-          border-radius: 4px;
-          margin: 10px 0;
-        }
-
-        .result {
-          margin-top: 20px;
-          padding: 20px;
-          background: #f9f9f9;
-          border-radius: 4px;
-        }
-
-        .bazi-data {
-          background: white;
-          padding: 15px;
-          border-radius: 4px;
-          margin: 10px 0;
-        }
-
-        .interpretation {
-          margin-top: 15px;
-          padding: 15px;
-          background: white;
-          border-radius: 4px;
-        }
-
-        .credits {
-          font-weight: bold;
-          margin-top: 10px;
-        }
-
-        .cta {
-          margin-top: 15px;
-          padding: 20px;
-          background: #fff7ed;
-          border-radius: 8px;
-          text-align: center;
-        }
-
-        .cta p {
-          margin-bottom: 12px;
-          color: #9a3412;
-        }
-
-        .cta-button {
-          display: inline-block;
-          padding: 12px 24px;
-          background: #ea580c;
-          color: white;
-          border-radius: 6px;
-          text-decoration: none;
-          font-weight: 600;
-        }
-
-        .share-buttons {
-          margin-top: 16px;
+        .gender-toggle {
           display: flex;
           gap: 12px;
         }
 
-        .share-btn {
-          padding: 10px 20px;
-          background: #10b981;
-          color: white;
-          border: none;
-          border-radius: 6px;
-          font-size: 0.875rem;
+        .gender-toggle button {
+          flex: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          padding: 14px;
+          background: rgba(3, 0, 20, 0.5);
+          border: 1px solid var(--border);
+          border-radius: 12px;
+          color: var(--foreground);
+          font-size: 1rem;
           cursor: pointer;
+          transition: all 0.3s;
+        }
+
+        .gender-toggle button.active {
+          background: rgba(124, 58, 237, 0.3);
+          border-color: var(--accent);
+        }
+
+        .gender-icon {
+          font-size: 1.25rem;
+        }
+
+        .btn-submit {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 4px;
+          padding: 18px;
+          margin-top: 24px;
+          background: linear-gradient(135deg, rgba(124, 58, 237, 0.4) 0%, rgba(79, 70, 229, 0.5) 100%);
+          border: 1px solid var(--accent);
+          border-radius: 16px;
+          color: #fff;
+          font-size: 1.1rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 30px rgba(124, 58, 237, 0.4);
+        }
+
+        .btn-submit:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+
+        .btn-submit .en {
+          font-size: 0.7rem;
+          opacity: 0.7;
+          font-weight: 400;
+        }
+
+        .loading {
+          animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
+        }
+
+        .error-message {
+          margin-top: 16px;
+          padding: 12px 16px;
+          background: rgba(239, 68, 68, 0.1);
+          border: 1px solid rgba(239, 68, 68, 0.3);
+          border-radius: 12px;
+          color: #ef4444;
+          font-size: 0.9rem;
+        }
+
+        .cta-banner {
+          margin-top: 24px;
+          padding: 20px;
+          background: rgba(251, 191, 36, 0.1);
+          border: 1px solid rgba(251, 191, 36, 0.3);
+          border-radius: 16px;
+          text-align: center;
+        }
+
+        .cta-banner p {
+          margin-bottom: 12px;
+          color: var(--cosmic-gold);
+        }
+
+        .cta-button {
+          display: inline-block;
+          padding: 12px 32px;
+          background: var(--cosmic-gold);
+          color: #030014;
+          border-radius: 30px;
+          font-weight: 600;
+          text-decoration: none;
+        }
+
+        .result-section {
+          animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        .four-pillars {
+          background: rgba(26, 22, 53, 0.6);
+          border: 1px solid var(--border);
+          border-radius: 24px;
+          padding: 32px;
+          margin-bottom: 24px;
+        }
+
+        .pillars-title {
+          text-align: center;
+          margin-bottom: 32px;
+        }
+
+        .pillars-title .zh {
+          display: block;
+          font-family: var(--font-display);
+          font-size: 1.5rem;
+          color: var(--cosmic-gold);
+        }
+
+        .pillars-title .en {
+          font-size: 0.8rem;
+          opacity: 0.5;
+        }
+
+        .pillars-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 12px;
+        }
+
+        .pillar {
+          text-align: center;
+          padding: 20px 12px;
+          background: rgba(3, 0, 20, 0.4);
+          border: 1px solid var(--border);
+          border-radius: 16px;
+          transition: all 0.3s;
+        }
+
+        .pillar:hover {
+          transform: translateY(-4px);
+          border-color: var(--accent);
+        }
+
+        .pillar-label {
+          font-size: 0.75rem;
+          color: var(--muted-foreground);
+          margin-bottom: 8px;
+        }
+
+        .pillar-value {
+          font-family: var(--font-display);
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: var(--cosmic-gold);
+          margin-bottom: 4px;
+        }
+
+        .pillar-en {
+          font-size: 0.65rem;
+          opacity: 0.4;
+        }
+
+        .ai-interpretation {
+          background: rgba(26, 22, 53, 0.6);
+          border: 1px solid var(--border);
+          border-radius: 24px;
+          padding: 24px;
+          margin-bottom: 24px;
+        }
+
+        .ai-header {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 20px;
+        }
+
+        .ai-icon {
+          font-size: 1.5rem;
+          color: var(--accent);
+        }
+
+        .ai-header h3 {
+          flex: 1;
+          font-size: 1.1rem;
+        }
+
+        .ai-badge {
+          font-size: 0.65rem;
+          padding: 4px 10px;
+          background: rgba(124, 58, 237, 0.2);
+          border-radius: 20px;
+          color: var(--accent);
+        }
+
+        .interpretation-content {
+          padding: 16px;
+          background: rgba(3, 0, 20, 0.4);
+          border-radius: 12px;
+          line-height: 1.8;
+          font-size: 0.95rem;
+        }
+
+        .credits-info {
+          text-align: center;
+          padding: 12px;
+          font-size: 0.9rem;
+          opacity: 0.7;
         }
 
         .email-capture {
-          margin-top: 16px;
-          padding: 16px;
-          background: #f0f9ff;
-          border-radius: 8px;
+          padding: 20px;
+          background: rgba(34, 211, 216, 0.1);
+          border: 1px solid rgba(34, 211, 216, 0.3);
+          border-radius: 16px;
           text-align: center;
+          margin-bottom: 16px;
         }
 
         .email-capture p {
           margin-bottom: 12px;
-          color: #0369a1;
-          font-size: 0.875rem;
+          color: var(--energy-cyan);
         }
 
         .email-capture form {
@@ -509,21 +645,50 @@ export default function BaziPage() {
 
         .email-capture input {
           flex: 1;
-          padding: 8px 12px;
-          border: 1px solid #bae6fd;
-          border-radius: 6px;
+          padding: 10px 14px;
+          border-radius: 10px;
         }
 
         .email-capture button {
-          padding: 8px 16px;
-          background: #0284c7;
-          color: white;
+          padding: 10px 20px;
+          background: var(--energy-cyan);
+          color: #030014;
           border: none;
-          border-radius: 6px;
+          border-radius: 10px;
+          font-weight: 600;
           cursor: pointer;
+        }
+
+        .share-btn {
+          width: 100%;
+          padding: 14px;
+          background: transparent;
+          border: 1px solid var(--border);
+          border-radius: 12px;
+          color: var(--foreground);
+          font-size: 0.95rem;
+          cursor: pointer;
+          transition: all 0.3s;
+        }
+
+        .share-btn:hover {
+          background: rgba(255,255,255,0.05);
+        }
+
+        @media (max-width: 640px) {
+          .input-row {
+            grid-template-columns: 1fr;
+          }
+
+          .pillars-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
         }
       `}</style>
     </div>
   );
 }
 
+export default function BaziPage() {
+  return <BaziForm />;
+}

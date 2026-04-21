@@ -14,6 +14,6 @@
     "declarationMap": true,
     "sourceMap": true
   },
-  "include": ["index.ts", "calculator.py"],
+  "include": ["index.ts", "src/**/*"],
   "exclude": ["node_modules", "dist", "**/*.test.*"]
 }

@@ -2,9 +2,18 @@
   "name": "@fateful-chat/bazi-core",
   "version": "1.0.0",
   "main": "index.ts",
+  "types": "index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./lunar": "./src/lunar.ts",
+    "./shishen": "./src/shishen.ts",
+    "./dayun": "./src/dayun.ts",
+    "./liuyue": "./src/liuyue.ts",
+    "./types": "./src/types.ts"
+  },
   "scripts": {
     "build": "tsc",
-    "test": "python -m pytest tests/"
+    "test": "node src/test.ts"
   },
   "devDependencies": {
     "@types/node": "^20.5.0",

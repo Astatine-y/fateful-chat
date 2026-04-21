@@ -73,47 +73,79 @@ export default function LoginPage() {
 
   return (
     <div className="auth-page">
-      <div className="auth-card">
-        <h1>登录</h1>
-        <p className="subtitle">登录您的账户</p>
+      <div className="auth-bg">
+        <div className="star star-1"></div>
+        <div className="star star-2"></div>
+        <div className="star star-3"></div>
+      </div>
 
-        <button type="button" onClick={handleGoogleLogin} disabled={googleLoading} className="google-btn">
-          {googleLoading ? '加载中...' : '使用 Google 账号登录'}
-        </button>
+      <Link href="/" className="back-home">☯ FATEFUL</Link>
 
-        <div className="divider">
-          <span>或</span>
+      <div className="auth-container">
+        <div className="auth-card">
+          <div className="symbol">☯</div>
+          <h1>
+            <span className="zh">登录</span>
+            <span className="en">Sign In</span>
+          </h1>
+          <p className="mission">进入你的生命代码系统</p>
+
+          <button type="button" onClick={handleGoogleLogin} disabled={googleLoading} className="google-btn">
+            {googleLoading ? (
+              <span>Loading...</span>
+            ) : (
+              <>
+                <span className="google-icon">G</span>
+                <span>使用 Google 账号登录</span>
+              </>
+            )}
+          </button>
+
+          <div className="divider">
+            <span>或</span>
+          </div>
+
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="邮箱地址"
+                required
+              />
+            </div>
+            <div className="form-group">
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="密码"
+                required
+              />
+            </div>
+            <button type="submit" disabled={loading} className="primary-btn">
+              {loading ? (
+                <span className="loading">进入中...</span>
+              ) : (
+                <>
+                  <span className="zh">进入系统</span>
+                  <span className="en">Enter</span>
+                </>
+              )}
+            </button>
+          </form>
+
+          {error && <div className="error-message">{error}</div>}
+
+          <p className="footer">
+            还没有账户? <Link href="/auth/register">创建账户</Link>
+          </p>
         </div>
 
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="邮箱地址"
-              required
-            />
-          </div>
-          <div className="form-group">
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="密码"
-              required
-            />
-          </div>
-          <button type="submit" disabled={loading} className="primary-btn">
-            {loading ? '登录中...' : '登录'}
-          </button>
-        </form>
-
-        {error && <div className="error">{error}</div>}
-
-        <p className="footer">
-          还没有账户? <Link href="/auth/register">创建账户</Link>
-        </p>
+        <div className="auth-footer">
+          <p>在AI时代找到自我、力量、平静与路径</p>
+        </div>
       </div>
 
       <style jsx>{`
@@ -122,54 +154,162 @@ export default function LoginPage() {
           display: flex;
           align-items: center;
           justify-content: center;
-          padding: 20px;
-          background: #f9fafb;
+          padding: 24px;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .auth-bg {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          pointer-events: none;
+        }
+
+        .star {
+          position: absolute;
+          border-radius: 50%;
+          animation: twinkle 3s ease-in-out infinite;
+        }
+
+        .star-1 {
+          width: 4px;
+          height: 4px;
+          background: var(--cosmic-gold);
+          top: 20%;
+          left: 30%;
+          animation-delay: 0s;
+        }
+
+        .star-2 {
+          width: 3px;
+          height: 3px;
+          background: var(--accent);
+          top: 60%;
+          left: 70%;
+          animation-delay: 1s;
+        }
+
+        .star-3 {
+          width: 2px;
+          height: 2px;
+          background: var(--energy-cyan);
+          top: 80%;
+          left: 20%;
+          animation-delay: 2s;
+        }
+
+        @keyframes twinkle {
+          0%, 100% { opacity: 0.3; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.5); }
+        }
+
+        .back-home {
+          position: absolute;
+          top: 24px;
+          left: 24px;
+          font-family: var(--font-display);
+          font-size: 1.25rem;
+          color: var(--cosmic-gold);
+          text-decoration: none;
+          letter-spacing: 0.1rem;
+          z-index: 10;
+        }
+
+        .auth-container {
+          width: 100%;
+          max-width: 420px;
+          position: relative;
+          z-index: 1;
         }
 
         .auth-card {
-          width: 100%;
-          max-width: 400px;
-          padding: 40px;
-          background: white;
-          border-radius: 16px;
-          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+          padding: 48px 40px;
+          background: rgba(26, 22, 53, 0.8);
+          border: 1px solid var(--border);
+          border-radius: 24px;
+          backdrop-filter: blur(20px);
+        }
+
+        .symbol {
+          text-align: center;
+          font-size: 3rem;
+          color: var(--cosmic-gold);
+          margin-bottom: 20px;
+          animation: cosmicGlow 3s ease-in-out infinite;
         }
 
         h1 {
-          margin: 0 0 8px;
-          font-size: 1.75rem;
           text-align: center;
+          margin-bottom: 8px;
         }
 
-        .subtitle {
-          margin-bottom: 24px;
-          color: #6b7280;
+        .zh {
+          display: block;
+          font-family: var(--font-display);
+          font-size: 1.75rem;
+        }
+
+        .en {
+          display: block;
+          font-size: 0.8rem;
+          opacity: 0.6;
+          margin-top: 4px;
+        }
+
+        .mission {
           text-align: center;
+          font-size: 0.9rem;
+          opacity: 0.6;
+          margin-bottom: 32px;
         }
 
         .google-btn {
           width: 100%;
-          padding: 12px;
-          background: #4285f4;
-          color: white;
-          border: none;
-          border-radius: 8px;
-          font-size: 1rem;
-          font-weight: 500;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 12px;
+          padding: 14px;
+          background: rgba(255, 255, 255, 0.1);
+          border: 1px solid var(--border);
+          border-radius: 12px;
+          color: var(--foreground);
+          font-size: 0.95rem;
           cursor: pointer;
-          margin-bottom: 16px;
+          transition: all 0.3s;
+        }
+
+        .google-btn:hover {
+          background: rgba(255, 255, 255, 0.15);
+          border-color: var(--muted-foreground);
         }
 
         .google-btn:disabled {
           opacity: 0.6;
+          cursor: not-allowed;
+        }
+
+        .google-icon {
+          width: 24px;
+          height: 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: linear-gradient(135deg, #4285f4, #34a853);
+          border-radius: 4px;
+          font-weight: 700;
+          font-size: 0.8rem;
         }
 
         .divider {
           display: flex;
           align-items: center;
-          margin: 20px 0;
-          color: #9ca3af;
-          font-size: 0.875rem;
+          margin: 28px 0;
+          color: var(--muted-foreground);
+          font-size: 0.8rem;
         }
 
         .divider::before,
@@ -177,11 +317,11 @@ export default function LoginPage() {
           content: '';
           flex: 1;
           height: 1px;
-          background: #e5e7eb;
+          background: var(--border);
         }
 
         .divider span {
-          padding: 0 12px;
+          padding: 0 16px;
         }
 
         .form-group {
@@ -190,23 +330,45 @@ export default function LoginPage() {
 
         .form-group input {
           width: 100%;
-          padding: 12px 16px;
-          border: 1px solid #d1d5db;
-          border-radius: 8px;
+          padding: 14px 18px;
+          background: rgba(3, 0, 20, 0.5);
+          border: 1px solid var(--border);
+          border-radius: 12px;
+          color: var(--foreground);
           font-size: 1rem;
+          transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+          outline: none;
+          border-color: var(--accent);
+        }
+
+        .form-group input::placeholder {
+          color: var(--muted-foreground);
         }
 
         .primary-btn {
           width: 100%;
-          padding: 14px;
-          background: #2563eb;
-          color: white;
-          border: none;
-          border-radius: 8px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 2px;
+          padding: 16px;
+          margin-top: 8px;
+          background: linear-gradient(135deg, rgba(124, 58, 237, 0.4) 0%, rgba(79, 70, 229, 0.5) 100%);
+          border: 1px solid var(--accent);
+          border-radius: 12px;
+          color: #fff;
           font-size: 1rem;
           font-weight: 600;
           cursor: pointer;
-          margin-top: 8px;
+          transition: all 0.3s;
+        }
+
+        .primary-btn:hover:not(:disabled) {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 30px rgba(124, 58, 237, 0.4);
         }
 
         .primary-btn:disabled {
@@ -214,25 +376,57 @@ export default function LoginPage() {
           cursor: not-allowed;
         }
 
-        .error {
+        .primary-btn .en {
+          font-size: 0.7rem;
+          opacity: 0.7;
+          font-weight: 400;
+        }
+
+        .loading {
+          animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
+        }
+
+        .error-message {
           margin-top: 16px;
-          padding: 12px;
-          background: #fef2f2;
-          color: #dc2626;
-          border-radius: 8px;
-          font-size: 0.875rem;
+          padding: 12px 16px;
+          background: rgba(239, 68, 68, 0.1);
+          border: 1px solid rgba(239, 68, 68, 0.3);
+          border-radius: 12px;
+          color: #ef4444;
+          font-size: 0.85rem;
+          text-align: center;
         }
 
         .footer {
-          margin-top: 24px;
+          margin-top: 28px;
           text-align: center;
-          color: #6b7280;
-          font-size: 0.875rem;
+          font-size: 0.85rem;
+          color: var(--muted-foreground);
         }
 
         .footer a {
-          color: #2563eb;
+          color: var(--cosmic-gold);
           text-decoration: none;
+          margin-left: 4px;
+        }
+
+        .footer a:hover {
+          text-decoration: underline;
+        }
+
+        .auth-footer {
+          margin-top: 24px;
+          text-align: center;
+        }
+
+        .auth-footer p {
+          font-size: 0.8rem;
+          opacity: 0.5;
         }
       `}</style>
     </div>

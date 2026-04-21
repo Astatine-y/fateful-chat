@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 interface Calculation {
   _id: string;
@@ -59,147 +60,495 @@ export default function HistoryPage() {
 
   if (loading) {
     return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p>加载中...</p>
+      <div className="history-page">
+        <nav className="nav-bar">
+          <Link href="/" className="nav-logo">☯ FATEFUL</Link>
+          <Link href="/dashboard" className="nav-link">控制台</Link>
+        </nav>
+        <div className="loading-container">
+          <div className="taiji">☯</div>
+          <p>Loading history...</p>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="history-page">
-      <h1>计算历史</h1>
-      
-      {calculations.length === 0 ? (
-        <div className="empty">
-          <p>暂无计算记录</p>
-          <a href="/bazi">开始计算</a>
-        </div>
-      ) : (
-        <div className="list">
-          {calculations.map((calc) => (
-            <div key={calc._id} className="item" onClick={() => setSelected(calc)}>
-              <div className="bazi">
-                {calc.bazi.year} {calc.bazi.month} {calc.bazi.day} {calc.bazi.hour}
-              </div>
-              <div className="date">{new Date(calc.createdAt).toLocaleDateString('zh-CN')}</div>
-            </div>
-          ))}
-        </div>
-      )}
+      <nav className="nav-bar">
+        <Link href="/" className="nav-logo">☯ FATEFUL</Link>
+        <Link href="/dashboard" className="nav-link">控制台</Link>
+      </nav>
 
-      {selected && (
-        <div className="modal" onClick={() => setSelected(null)}>
-          <div className="detail" onClick={(e) => e.stopPropagation()}>
-            <button className="close" onClick={() => setSelected(null)}>×</button>
-            <h2>八字</h2>
-            <div className="bazi-grid">
-              <div>年柱: {selected.bazi.year}</div>
-              <div>月柱: {selected.bazi.month}</div>
-              <div>日柱: {selected.bazi.day}</div>
-              <div>时柱: {selected.bazi.hour}</div>
-            </div>
-            <h3>解读</h3>
-            <p className="interpretation">{selected.interpretation || '无解读'}</p>
-            <button className="delete" onClick={() => deleteHistory(selected._id)}>删除</button>
+      <div className="content">
+        <header className="page-header">
+          <div className="symbol">◷</div>
+          <h1>
+            <span className="zh">计算历史</span>
+            <span className="en">Calculation History</span>
+          </h1>
+        </header>
+
+        {calculations.length === 0 ? (
+          <div className="empty-state">
+            <div className="empty-icon">☰</div>
+            <p>
+              <span className="zh">暂无计算记录</span>
+              <span className="en">No records yet</span>
+            </p>
+            <Link href="/bazi" className="btn-start">
+              <span className="zh">开始计算</span>
+              <span className="en">Start Reading</span>
+            </Link>
           </div>
-        </div>
-      )}
+        ) : (
+          <div className="history-list">
+            {calculations.map((calc) => (
+              <div 
+                key={calc._id} 
+                className="history-item" 
+                onClick={() => setSelected(calc)}
+              >
+                <div className="bazi-display">
+                  <div className="pillar">
+                    <span className="label">年</span>
+                    <span className="value">{calc.bazi.year}</span>
+                  </div>
+                  <div className="pillar">
+                    <span className="label">月</span>
+                    <span className="value">{calc.bazi.month}</span>
+                  </div>
+                  <div className="pillar">
+                    <span className="label">日</span>
+                    <span className="value">{calc.bazi.day}</span>
+                  </div>
+                  <div className="pillar">
+                    <span className="label">时</span>
+                    <span className="value">{calc.bazi.hour}</span>
+                  </div>
+                </div>
+                <div className="meta">
+                  <span className="date">{new Date(calc.createdAt).toLocaleDateString('zh-CN')}</span>
+                  <span className="arrow">→</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {selected && (
+          <div className="modal-overlay" onClick={() => setSelected(null)}>
+            <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+              <button className="close-btn" onClick={() => setSelected(null)}>×</button>
+              
+              <div className="modal-header">
+                <h2>
+                  <span className="zh">八字解读</span>
+                  <span className="en">Bazi Reading</span>
+                </h2>
+                <p className="date">{new Date(selected.createdAt).toLocaleDateString('zh-CN')}</p>
+              </div>
+
+              <div className="four-pillars">
+                <div className="pillar">
+                  <span className="label">年柱</span>
+                  <span className="value">{selected.bazi.year}</span>
+                </div>
+                <div className="pillar">
+                  <span className="label">月柱</span>
+                  <span className="value">{selected.bazi.month}</span>
+                </div>
+                <div className="pillar">
+                  <span className="label">日柱</span>
+                  <span className="value">{selected.bazi.day}</span>
+                </div>
+                <div className="pillar">
+                  <span className="label">时柱</span>
+                  <span className="value">{selected.bazi.hour}</span>
+                </div>
+              </div>
+
+              <div className="interpretation-section">
+                <h3>AI解读</h3>
+                <p className="interpretation-text">
+                  {selected.interpretation || 'No interpretation available'}
+                </p>
+              </div>
+
+              <button 
+                className="delete-btn" 
+                onClick={() => deleteHistory(selected._id)}
+              >
+                <span className="zh">删除记录</span>
+                <span className="en">Delete Record</span>
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
 
       <style jsx>{`
         .history-page {
           min-height: 100vh;
           padding: 24px;
-          background: #f9fafb;
+          position: relative;
         }
+
+        .nav-bar {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 16px 24px;
+          margin: -24px -24px 40px;
+          background: rgba(3, 0, 20, 0.8);
+          backdrop-filter: blur(10px);
+          border-bottom: 1px solid var(--border);
+        }
+
+        .nav-logo {
+          font-family: var(--font-display);
+          font-size: 1.25rem;
+          color: var(--cosmic-gold);
+          text-decoration: none;
+          letter-spacing: 0.1rem;
+        }
+
+        .nav-link {
+          color: var(--foreground);
+          text-decoration: none;
+          font-size: 0.9rem;
+          opacity: 0.7;
+        }
+
+        .loading-container {
+          min-height: 60vh;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 20px;
+        }
+
+        .loading-container .taiji {
+          font-size: 3rem;
+          color: var(--cosmic-gold);
+          animation: rotate 4s linear infinite;
+        }
+
+        @keyframes rotate {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+
+        .content {
+          max-width: 600px;
+          margin: 0 auto;
+        }
+
+        .page-header {
+          text-align: center;
+          margin-bottom: 40px;
+        }
+
+        .symbol {
+          font-size: 2.5rem;
+          color: var(--cosmic-gold);
+          margin-bottom: 16px;
+        }
+
         h1 {
-          margin-bottom: 24px;
+          margin-bottom: 0;
         }
-        .empty {
+
+        .zh {
+          display: block;
+          font-family: var(--font-display);
+          font-size: 1.5rem;
+        }
+
+        .en {
+          display: block;
+          font-size: 0.8rem;
+          opacity: 0.6;
+          margin-top: 4px;
+        }
+
+        .empty-state {
           text-align: center;
           padding: 60px 20px;
+          background: rgba(26, 22, 53, 0.6);
+          border: 1px solid var(--border);
+          border-radius: 20px;
         }
-        .empty a {
-          display: inline-block;
-          margin-top: 16px;
-          padding: 12px 24px;
-          background: #2563eb;
-          color: white;
-          border-radius: 8px;
+
+        .empty-icon {
+          font-size: 3rem;
+          color: var(--accent);
+          margin-bottom: 20px;
+          opacity: 0.5;
+        }
+
+        .empty-state p {
+          margin-bottom: 24px;
+        }
+
+        .empty-state .zh {
+          font-family: var(--font-display);
+          font-size: 1.25rem;
+          margin-bottom: 4px;
+        }
+
+        .empty-state .en {
+          font-size: 0.8rem;
+          opacity: 0.5;
+        }
+
+        .btn-start {
+          display: inline-flex;
+          flex-direction: column;
+          gap: 2px;
+          padding: 14px 32px;
+          background: linear-gradient(135deg, rgba(124, 58, 237, 0.4) 0%, rgba(79, 70, 229, 0.5) 100%);
+          border: 1px solid var(--accent);
+          border-radius: 30px;
+          color: #fff;
           text-decoration: none;
+          font-weight: 600;
+          transition: all 0.3s;
         }
-        .list {
+
+        .btn-start:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 30px rgba(124, 58, 237, 0.4);
+        }
+
+        .btn-start .en {
+          font-size: 0.7rem;
+          opacity: 0.7;
+          font-weight: 400;
+        }
+
+        .history-list {
           display: flex;
           flex-direction: column;
           gap: 12px;
         }
-        .item {
-          background: white;
-          padding: 16px;
-          border-radius: 12px;
-          cursor: pointer;
+
+        .history-item {
           display: flex;
           justify-content: space-between;
           align-items: center;
+          padding: 20px;
+          background: rgba(26, 22, 53, 0.6);
+          border: 1px solid var(--border);
+          border-radius: 16px;
+          cursor: pointer;
+          transition: all 0.3s;
         }
-        .bazi {
-          font-size: 1.125rem;
-          font-weight: 600;
+
+        .history-item:hover {
+          border-color: var(--accent);
+          transform: translateX(4px);
         }
-        .date {
-          color: #6b7280;
-          font-size: 0.875rem;
+
+        .bazi-display {
+          display: flex;
+          gap: 16px;
         }
-        .modal {
+
+        .bazi-display .pillar {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .bazi-display .label {
+          font-size: 0.65rem;
+          color: var(--muted-foreground);
+          margin-bottom: 2px;
+        }
+
+        .bazi-display .value {
+          font-family: var(--font-display);
+          font-size: 1rem;
+          color: var(--cosmic-gold);
+        }
+
+        .meta {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .meta .date {
+          font-size: 0.8rem;
+          opacity: 0.6;
+        }
+
+        .meta .arrow {
+          color: var(--accent);
+          opacity: 0;
+          transform: translateX(-8px);
+          transition: all 0.3s;
+        }
+
+        .history-item:hover .meta .arrow {
+          opacity: 1;
+          transform: translateX(0);
+        }
+
+        .modal-overlay {
           position: fixed;
           inset: 0;
-          background: rgba(0,0,0,0.5);
+          background: rgba(3, 0, 20, 0.9);
           display: flex;
           align-items: center;
           justify-content: center;
           padding: 20px;
+          z-index: 100;
+          animation: fadeIn 0.3s ease;
         }
-        .detail {
-          background: white;
-          border-radius: 16px;
-          padding: 24px;
+
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+
+        .modal-card {
+          background: rgba(26, 22, 53, 0.95);
+          border: 1px solid var(--border);
+          border-radius: 24px;
+          padding: 32px;
           max-width: 500px;
           width: 100%;
           max-height: 80vh;
           overflow-y: auto;
           position: relative;
+          animation: slideUp 0.3s ease;
         }
-        .close {
+
+        @keyframes slideUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        .close-btn {
           position: absolute;
-          top: 12px;
-          right: 12px;
+          top: 16px;
+          right: 16px;
           background: none;
           border: none;
           font-size: 1.5rem;
+          color: var(--foreground);
           cursor: pointer;
+          opacity: 0.6;
+          transition: opacity 0.3s;
         }
-        .bazi-grid {
+
+        .close-btn:hover {
+          opacity: 1;
+        }
+
+        .modal-header {
+          text-align: center;
+          margin-bottom: 24px;
+        }
+
+        .modal-header h2 {
+          margin-bottom: 8px;
+        }
+
+        .modal-header .zh {
+          font-family: var(--font-display);
+          font-size: 1.25rem;
+        }
+
+        .modal-header .date {
+          font-size: 0.8rem;
+          opacity: 0.5;
+        }
+
+        .four-pillars {
           display: grid;
-          grid-template-columns: 1fr 1fr;
+          grid-template-columns: repeat(4, 1fr);
           gap: 12px;
-          padding: 16px 0;
+          margin-bottom: 24px;
         }
-        .interpretation {
+
+        .four-pillars .pillar {
+          text-align: center;
+          padding: 16px 8px;
+          background: rgba(3, 0, 20, 0.5);
+          border: 1px solid var(--border);
+          border-radius: 12px;
+        }
+
+        .four-pillars .label {
+          display: block;
+          font-size: 0.7rem;
+          color: var(--muted-foreground);
+          margin-bottom: 8px;
+        }
+
+        .four-pillars .value {
+          display: block;
+          font-family: var(--font-display);
+          font-size: 1.1rem;
+          color: var(--cosmic-gold);
+        }
+
+        .interpretation-section {
+          margin-bottom: 24px;
+        }
+
+        .interpretation-section h3 {
+          font-size: 0.9rem;
+          margin-bottom: 12px;
+          opacity: 0.8;
+        }
+
+        .interpretation-text {
           padding: 16px;
-          background: #f3f4f6;
-          border-radius: 8px;
+          background: rgba(3, 0, 20, 0.4);
+          border-radius: 12px;
+          font-size: 0.85rem;
+          line-height: 1.8;
           white-space: pre-wrap;
-          font-size: 0.875rem;
-          line-height: 1.6;
         }
-        .delete {
+
+        .delete-btn {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 2px;
           width: 100%;
-          margin-top: 16px;
-          padding: 12px;
-          background: #ef4444;
-          color: white;
-          border: none;
-          border-radius: 8px;
+          padding: 14px;
+          background: transparent;
+          border: 1px solid rgba(239, 68, 68, 0.5);
+          border-radius: 12px;
+          color: #ef4444;
+          font-size: 0.95rem;
           cursor: pointer;
+          transition: all 0.3s;
+        }
+
+        .delete-btn:hover {
+          background: rgba(239, 68, 68, 0.1);
+        }
+
+        .delete-btn .en {
+          font-size: 0.7rem;
+          opacity: 0.7;
+        }
+
+        @media (max-width: 480px) {
+          .bazi-display {
+            gap: 8px;
+          }
+          
+          .bazi-display .value {
+            font-size: 0.85rem;
+          }
         }
       `}</style>
     </div>

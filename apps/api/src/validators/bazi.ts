@@ -34,6 +34,11 @@ export function validateBaziInput(data: any): { valid: boolean; errors: string[]
     errors.push('Latitude must be between -90 and 90');
   }
 
+  // Validate gender (optional)
+  if (data.gender && !['male', 'female'].includes(data.gender)) {
+    errors.push('Gender must be "male" or "female"');
+  }
+
   return {
     valid: errors.length === 0,
     errors,

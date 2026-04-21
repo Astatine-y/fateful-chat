@@ -10,13 +10,16 @@
     "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
-    "test": "turbo test"
+    "test": "turbo test",
+    "deploy": "bash deploy.sh",
+    "deploy:win": "powershell -File deploy.ps1"
   },
   "devDependencies": {
     "turbo": "^1.10.0"
   },
   "packageManager": "npm@9.0.0",
   "dependencies": {
+    "encoding": "^0.1.13",
     "i18next": "^26.0.5",
     "i18next-browser-languagedetector": "^8.2.1",
     "i18next-http-backend": "^3.0.4",

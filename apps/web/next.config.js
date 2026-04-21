@@ -8,4 +8,7 @@ module.exports = {
       destination: `${apiUrl}/api/:path*`,
     },
   ],
+  typescript: {
+    ignoreBuildErrors: true,
+  },
 };

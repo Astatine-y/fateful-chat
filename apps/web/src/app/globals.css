@@ -3,55 +3,103 @@
 @tailwind utilities;
 
 :root {
-  --foreground: #111827;
-  --background: #ffffff;
-  --background-secondary: #f9fafb;
-  --card: #ffffff;
-  --card-foreground: #111827;
-  --primary: #2563eb;
-  --primary-foreground: #ffffff;
-  --secondary: #f3f4f6;
-  --secondary-foreground: #111827;
-  --muted: #f3f4f6;
-  --muted-foreground: #6b7280;
-  --accent: #f3f4f6;
-  --accent-foreground: #111827;
+  --foreground: #e2e8f0;
+  --background: #030014;
+  --background-secondary: #0c0a1d;
+  --card: #1a1635;
+  --card-foreground: #e2e8f0;
+  --primary: #a78bfa;
+  --primary-foreground: #030014;
+  --secondary: #2d2555;
+  --secondary-foreground: #c4b5fd;
+  --muted: #1f1835;
+  --muted-foreground: #94a3b8;
+  --accent: #7c3aed;
+  --accent-foreground: #ffffff;
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-  --border: #e5e7eb;
-  --input: #e5e7eb;
-  --ring: #2563eb;
-  --radius: 0.5rem;
+  --border: #3d3166;
+  --input: #3d3166;
+  --ring: #a78bfa;
+  --radius: 0.75rem;
+  
+  --cosmic-gold: #fbbf24;
+  --cosmic-gold-glow: #fde68a;
+  --energy-cyan: #22d3d8;
+  --energy-purple: #c084fc;
+  --mystic-teal: #14b8a6;
+  --void-indigo: #4f46e5;
+  
+  --font-display: 'Noto Serif SC', 'Songti SC', serif;
+  --font-body: 'Inter', -apple-system, sans-serif;
 }
 
 .dark {
-  --foreground: #f9fafb;
-  --background: #0f172a;
-  --background-secondary: #1e293b;
-  --card: #1e293b;
-  --card-foreground: #f9fafb;
-  --primary: #3b82f6;
-  --primary-foreground: #ffffff;
-  --secondary: #334155;
-  --secondary-foreground: #f9fafb;
-  --muted: #334155;
+  --foreground: #e2e8f0;
+  --background: #030014;
+  --background-secondary: #0c0a1d;
+  --card: #1a1635;
+  --card-foreground: #e2e8f0;
+  --primary: #a78bfa;
+  --primary-foreground: #030014;
+  --secondary: #2d2555;
+  --secondary-foreground: #c4b5fd;
+  --muted: #1f1835;
   --muted-foreground: #94a3b8;
-  --accent: #334155;
-  --accent-foreground: #f9fafb;
+  --accent: #7c3aed;
+  --accent-foreground: #ffffff;
   --destructive: #7f1d1d;
   --destructive-foreground: #f9fafb;
-  --border: #334155;
-  --input: #334155;
-  --ring: #3b82f6;
+  --border: #3d3166;
+  --input: #3d3166;
+  --ring: #a78bfa;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
-.dark body {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(124, 58, 237, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 50% at 100% 100%, rgba(34, 211, 216, 0.08) 0%, transparent 40%),
+    radial-gradient(ellipse 50% 40% at 0% 100%, rgba(192, 132, 252, 0.08) 0%, transparent 40%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.page {
+  min-height: 100vh;
+  background: var(--background);
+  position: relative;
+}
+
+.page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 20%, rgba(124, 58, 237, 0.1) 0%, transparent 30%),
+    radial-gradient(circle at 80% 80%, rgba(34, 211, 216, 0.08) 0%, transparent 30%),
+    radial-gradient(circle at 50% 50%, rgba(192, 132, 252, 0.05) 0%, transparent 50%);
+  pointer-events: none;
 }
 
 .theme-toggle {
@@ -61,18 +109,63 @@ body {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  border: none;
+  border: 1px solid var(--border);
   background: var(--card);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  color: var(--foreground);
+  box-shadow: 0 4px 20px rgba(124, 58, 237, 0.3);
   cursor: pointer;
   font-size: 1.25rem;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 100;
-  transition: transform 0.2s;
+  transition: all 0.3s ease;
 }
 
 .theme-toggle:hover {
   transform: scale(1.1);
+  box-shadow: 0 6px 30px rgba(124, 58, 237, 0.5);
+}
+
+input, select, textarea {
+  background: var(--muted) !important;
+  border-color: var(--border) !important;
+  color: var(--foreground) !important;
+  border-radius: var(--radius) !important;
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--muted-foreground) !important;
+}
+
+button {
+  font-family: var(--font-body);
+  transition: all 0.3s ease;
+}
+
+@keyframes cosmicFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes cosmicGlow {
+  0%, 100% { box-shadow: 0 0 20px rgba(167, 139, 250, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(167, 139, 250, 0.6); }
+}
+
+@keyframes starField {
+  0% { background-position: 0 0, 0 0; }
+  100% { background-position: 500px 500px, 1000px 1000px; }
+}
+
+.cosmic-bg {
+  background: 
+    radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,0.8) 50%, transparent 0%),
+    radial-gradient(1px 1px at 30% 40%, rgba(255,255,255,0.6) 50%, transparent 0%),
+    radial-gradient(1.5px 1.5px at 50% 60%, rgba(255,255,255,0.9) 50%, transparent 0%),
+    radial-gradient(1px 1px at 70% 30%, rgba(255,255,255,0.5) 50%, transparent 0%),
+    radial-gradient(1px 1px at 90% 70%, rgba(255,255,255,0.7) 50%, transparent 0%),
+    var(--background);
+  background-size: 200px 200px, 300px 300px;
+  animation: starField 60s linear infinite;
 }

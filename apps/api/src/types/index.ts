@@ -18,6 +18,7 @@ export interface BaziRequest {
   hour: number;
   longitude: number;
   latitude: number;
+  gender?: 'male' | 'female';
 }
 
 export interface AuthRequest<T = any> extends Request {

@@ -1,0 +1,50 @@
+name: Deploy Backend
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/api/**'
+      - 'packages/**'
+      - 'package.json'
+      - 'railway.toml'
+      - 'Dockerfile.api'
+
+jobs:
+  deploy-railway:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+      
+      - name: Login Railway
+        run: railway login --interactive=false --token=${{ secrets.RAILWAY_TOKEN }}
+      
+      - name: Link Project
+        run: railway link ${{ secrets.RAILWAY_PROJECT_ID }} --token=${{ secrets.RAILWAY_TOKEN }}
+      
+      - name: Set Environment Variables
+        run: |
+          railway variables set JWT_SECRET=${{ secrets.JWT_SECRET }} --token=${{ secrets.RAILWAY_TOKEN }}
+          railway variables set OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} --token=${{ secrets.RAILWAY_TOKEN }}
+          railway variables set MONGODB_URI=${{ secrets.MONGODB_URI }} --token=${{ secrets.RAILWAY_TOKEN }}
+          railway variables set STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }} --token=${{ secrets.RAILWAY_TOKEN }}
+          railway variables set STRIPE_PUBLISHABLE_KEY=${{ secrets.STRIPE_PUBLISHABLE_KEY }} --token=${{ secrets.RAILWAY_TOKEN }}
+          railway variables set STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET }} --token=${{ secrets.RAILWAY_TOKEN }}
+          railway variables set STRIPE_MONTHLY_PRICE_ID=${{ secrets.STRIPE_MONTHLY_PRICE_ID }} --token=${{ secrets.RAILWAY_TOKEN }}
+          railway variables set STRIPE_YEARLY_PRICE_ID=${{ secrets.STRIPE_YEARLY_PRICE_ID }} --token=${{ secrets.RAILWAY_TOKEN }}
+          railway variables set GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} --token=${{ secrets.RAILWAY_TOKEN }}
+          railway variables set GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} --token=${{ secrets.RAILWAY_TOKEN }}
+          railway variables set GOOGLE_CALLBACK_URL=${{ secrets.GOOGLE_CALLBACK_URL }} --token=${{ secrets.RAILWAY_TOKEN }}
+          railway variables set FRONTEND_URL=${{ secrets.FRONTEND_URL }} --token=${{ secrets.RAILWAY_TOKEN }}
+        shell: bash
+      
+      - name: Deploy
+        run: railway up --token=${{ secrets.RAILWAY_TOKEN }}
+      
+      - name: Get Output
+        run: echo "Deployment URL: $(railway domain)"

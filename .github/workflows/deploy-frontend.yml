@@ -1,0 +1,41 @@
+name: Deploy Frontend
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/web/**'
+      - 'packages/**'
+      - 'package.json'
+      - 'vercel.json'
+      - 'next.config.js'
+
+jobs:
+  deploy-vercel:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+      
+      - name: Pull Vercel Environment
+        run: vercel pull --yes --token=${{ secrets.VERCEL_TOKEN }} --environment=preview --git-branch=main
+        
+      - name: Build Project
+        run: npm run build --workspace=apps/web
+        
+      - name: Deploy to Preview
+        run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
+        
+      - name: Deploy to Production
+        if: github.ref == 'refs/heads/main'
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}

@@ -92,9 +92,9 @@ router.post('/cancel', auth, async (req: AuthRequest, res: any) => {
     await stripe.subscriptions.cancel(user.stripeSubscriptionId);
 
     user.isSubscribed = false;
-    user.subscriptionPlan = null;
-    user.subscriptionExpiresAt = null;
-    user.stripeSubscriptionId = null;
+    user.subscriptionPlan = undefined;
+    user.subscriptionExpiresAt = undefined;
+    user.stripeSubscriptionId = undefined;
     await user.save();
 
     res.json({ success: true, message: 'Subscription cancelled' });

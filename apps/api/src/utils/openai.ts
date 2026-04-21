@@ -17,15 +17,21 @@ const openai = new OpenAI({
   apiKey: config.openai.apiKey,
 });
 
-export async function getAiInterpretation(bazi: BaziResult): Promise<string> {
+export async function getAiInterpretation(bazi: BaziResult | string): Promise<string> {
   try {
-    const prompt = `请解读以下八字（天干地支）：
+    let prompt: string;
+    
+    if (typeof bazi === 'string') {
+      prompt = `请解读以下八字（天干地支）：\n${bazi}\n\n请提供详细的八字分析和人生建议。`;
+    } else {
+      prompt = `请解读以下八字（天干地支）：
 年柱：${bazi.year}
 月柱：${bazi.month}
 日柱：${bazi.day}
 时柱：${bazi.hour}
 
 请提供详细的八字分析和人生建议。`;
+    }
 
     const completion = await openai.chat.completions.create({
       model: 'gpt-4',
