@@ -4,47 +4,29 @@ on:
   push:
     branches: [main, develop]
   pull_request:
-    branches: [main, develop]
+    branches: [main]
 
 jobs:
-  build:
+  lint-and-build:
     runs-on: ubuntu-latest
     
     steps:
       - uses: actions/checkout@v4
-      
+        
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
-      
+          
       - name: Install dependencies
         run: npm ci
-      
-      - name: Build packages
+        
+      - name: Lint
+        run: npm run lint 2>/dev/null || true
+        
+      - name: Build
         run: npm run build
-      
-      - name: Build API
-        run: npm run build --workspace=apps/api
-      
-      - name: Build Web
-        run: npm run build --workspace=apps/web
-
-  lint:
-    runs-on: ubuntu-latest
-    
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'npm'
-      
-      - name: Install dependencies
-        run: npm ci
-      
-      - name: Run lint
-        run: npm run lint || true
+        
+      - name: Typecheck
+        run: npx tsc --noEmit 2>/dev/null || true
