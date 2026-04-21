@@ -36,4 +36,4 @@ jobs:
         run: railway up --token=${{ secrets.RAILWAY_TOKEN }}
         
       - name: Get Deployment URL
-        run: echo "Deployment URL: $(railway domain)"
+        run: railway domain
