@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { Logo } from './Logo';
+import { useTranslation } from 'react-i18next';
 
 interface EyePortalProps {
   onSubmit: (data: {
@@ -16,7 +17,13 @@ interface EyePortalProps {
 }
 
 export function EyePortal({ onSubmit, loading = false }: EyePortalProps) {
+  const { t, i18n } = useTranslation();
   const [activeField, setActiveField] = useState<string | null>(null);
+  
+  const toggleLanguage = () => {
+    const newLang = i18n.language === 'zh-CN' ? 'en' : 'zh-CN';
+    i18n.changeLanguage(newLang);
+  };
   
   const [year, setYear] = useState('');
   const [month, setMonth] = useState('');
@@ -72,11 +79,20 @@ export function EyePortal({ onSubmit, loading = false }: EyePortalProps) {
 
   const allFieldsSelected = year && month && day && hour;
 
+  const isZh = i18n.language === 'zh-CN';
+  
   return (
     <div className="eye-portal">
       <nav className="nav-bar">
-        <Logo size="sm" />
-        <Link href="/dashboard" className="nav-link">控制台</Link>
+        <Logo size="md" />
+        <div className="nav-right">
+          <button onClick={toggleLanguage} className="lang-toggle">
+            {isZh ? 'EN' : '中'}
+          </button>
+          <Link href="/dashboard" className="nav-link">
+            {isZh ? '控制台' : 'Dashboard'}
+          </Link>
+        </div>
       </nav>
 
       <div className="portal-container">
@@ -319,6 +335,28 @@ export function EyePortal({ onSubmit, loading = false }: EyePortalProps) {
           border-bottom: 1px solid var(--border);
           position: relative;
           z-index: 10;
+        }
+        
+        .nav-right {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+        }
+        
+        .lang-toggle {
+          padding: 8px 12px;
+          background: rgba(124, 58, 237, 0.3);
+          border: 1px solid var(--border);
+          border-radius: 8px;
+          color: var(--cosmic-gold);
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s;
+        }
+        
+        .lang-toggle:hover {
+          background: rgba(124, 58, 237, 0.5);
+          transform: scale(1.05);
         }
 
         .nav-link {
