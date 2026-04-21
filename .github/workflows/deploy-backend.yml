@@ -13,27 +13,12 @@ on:
 jobs:
   deploy-railway:
     runs-on: ubuntu-latest
-    
     steps:
       - uses: actions/checkout@v4
-        
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      
+      - name: Railway Deploy
+        uses: railwayhq/railway-deploy@v1
         with:
-          node-version: '20'
-          cache: 'npm'
-          
-      - name: Install Railway CLI
-        run: npm install -g @railway/cli
-          
-      - name: Login Railway
-        run: railway login --token ${{ secrets.RAILWAY_TOKEN }}
-         
-      - name: Deploy to Railway
-        run: railway up --detach --token ${{ secrets.RAILWAY_TOKEN }}
-         
-      - name: Wait for deployment
-        run: sleep 30
-          
-      - name: Get Deployment URL
-        run: railway domain || echo "Deployment started"
+          railway_token: ${{ secrets.RAILWAY_TOKEN }}
+          environment: production
+          service: ${{ secrets.RAILWAY_PROJECT_ID }}
