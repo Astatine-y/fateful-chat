@@ -17,7 +17,6 @@ export function calculateTimezone(longitude: number): number {
   // Timezone = 经度 / 15 (每15度一个时区)
   // 中国大致在东经73-135度，时区UTC+8
   const tz = Math.round(longitude / 15);
-  // Ensure valid timezone range
   return Math.max(-12, Math.min(14, tz));
 }
 
