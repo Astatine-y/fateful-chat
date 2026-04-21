@@ -28,12 +28,12 @@ jobs:
           
       - name: Login Railway
         run: railway login --interactive=false --token=${{ secrets.RAILWAY_TOKEN }}
-        
-      - name: Link Project
-        run: railway link ${{ secrets.RAILWAY_PROJECT_ID }} --token=${{ secrets.RAILWAY_TOKEN }}
-        
-      - name: Deploy
-        run: railway up --token=${{ secrets.RAILWAY_TOKEN }}
-        
+         
+      - name: Deploy to Railway
+        run: railway up --detach --token=${{ secrets.RAILWAY_TOKEN }}
+         
+      - name: Wait for deployment
+        run: sleep 30
+          
       - name: Get Deployment URL
-        run: railway domain
+        run: railway domain || echo "Deployment started"
