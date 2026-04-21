@@ -24,19 +24,19 @@ export function validateBaziInput(data: any): { valid: boolean; errors: string[]
     errors.push('Hour must be between 0 and 23');
   }
 
-  // Validate longitude
+  // Validate longitude (required for accurate calculation)
   if (typeof data.longitude !== 'number' || data.longitude < -180 || data.longitude > 180) {
-    errors.push('Longitude must be between -180 and 180');
+    errors.push('Longitude is required for accurate bazi calculation (-180 to 180)');
   }
 
-  // Validate latitude
-  if (typeof data.latitude !== 'number' || data.latitude < -90 || data.latitude > 90) {
+  // Validate latitude (optional - used for reference)
+  if (data.latitude !== undefined && (typeof data.latitude !== 'number' || data.latitude < -90 || data.latitude > 90)) {
     errors.push('Latitude must be between -90 and 90');
   }
 
-  // Validate gender (optional)
-  if (data.gender && !['male', 'female'].includes(data.gender)) {
-    errors.push('Gender must be "male" or "female"');
+  // Validate gender (required for ten shen calculation)
+  if (!data.gender || !['male', 'female'].includes(data.gender)) {
+    errors.push('Gender is required (male or female)');
   }
 
   return {

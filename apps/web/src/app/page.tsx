@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { Logo } from '@/components/Logo';
 
 export default function HomePage() {
   const { t } = useTranslation('common');
@@ -26,23 +27,18 @@ export default function HomePage() {
       </head>
 
       <div className="nav">
+        <Logo size="sm" showText={false} />
         <Link href="/auth/login" className="nav-link">登录</Link>
         <LanguageSwitcher />
       </div>
 
       <section className="hero">
         <div className="symbol-container">
-          <div className="taiji">☯</div>
-          <div className="orbits">
-            <div className="orbit orbit-1"></div>
-            <div className="orbit orbit-2"></div>
-            <div className="orbit orbit-3"></div>
-          </div>
+          <Logo size="lg" showText={false} />
         </div>
         
         <h1 className="title">
           <span className="title-zh">命</span>
-          <span className="title-en">FATEFUL</span>
         </h1>
         
         <p className="tagline">

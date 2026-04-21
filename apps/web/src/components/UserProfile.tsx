@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { Logo } from '@/components/Logo';
 
 interface UserProfile {
   id: string;
@@ -111,7 +112,7 @@ export default function UserProfile() {
     return (
       <div className="profile-page">
         <nav className="nav-bar">
-          <Link href="/" className="nav-logo">☯ FATEFUL</Link>
+          <Logo size="sm" />
           <Link href="/dashboard" className="nav-link">控制台</Link>
         </nav>
         <div className="loading-container">

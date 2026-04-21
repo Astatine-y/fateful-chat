@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { Logo } from '@/components/Logo';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -79,11 +80,13 @@ export default function LoginPage() {
         <div className="star star-3"></div>
       </div>
 
-      <Link href="/" className="back-home">☯ FATEFUL</Link>
+      <Link href="/" className="back-home"><Logo size="sm" showText={false} /></Link>
 
       <div className="auth-container">
         <div className="auth-card">
-          <div className="symbol">☯</div>
+          <div className="symbol">
+            <Logo size="lg" showText={false} />
+          </div>
           <h1>
             <span className="zh">登录</span>
             <span className="en">Sign In</span>

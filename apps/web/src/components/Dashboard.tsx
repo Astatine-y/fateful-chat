@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { Logo } from '@/components/Logo';
 
 interface UserData {
   id: string;
@@ -54,7 +55,7 @@ export default function Dashboard() {
   return (
     <div className="dashboard">
       <nav className="nav-bar">
-        <Link href="/" className="nav-logo">☯ FATEFUL</Link>
+        <Logo size="sm" />
         <div className="nav-links">
           <Link href="/bazi" className="nav-link">命理</Link>
           <Link href="/history" className="nav-link">历史</Link>

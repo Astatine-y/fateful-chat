@@ -1,15 +1,17 @@
 // apps/api/src/routes/bazi.ts
 import { Router } from 'express';
 import jwt from 'jsonwebtoken';
-import { getBazi } from '@fateful-chat/bazi-core';
+import { getBazi, BaziInput, BaziOutput } from '@fateful-chat/bazi-core';
 
-interface BaziInput {
-  year: number;
-  month: number;
-  day: number;
-  hour: number;
-  gender: 'male' | 'female';
-  timezone?: number;
+interface BaziResult {
+  year: string;
+  month: string;
+  day: string;
+  hour: string;
+  wu_xing?: string[];
+  shi_shen?: string[];
+  da_yun?: any;
+  liu_yue?: any;
 }
 
 function calculateBaziCore(
@@ -17,45 +19,47 @@ function calculateBaziCore(
   month: number, 
   day: number, 
   hour: number, 
-  longitude: number, 
-  latitude: number,
-  gender: 'male' | 'female' = 'male'
-) {
-  try {
-    const input: BaziInput = {
-      year,
-      month,
-      day,
-      hour,
-      gender,
-      timezone: 8
-    };
-    
-    const result = getBazi(input);
-    
-    return {
-      year: result.gan_zhi.year,
-      month: result.gan_zhi.month,
-      day: result.gan_zhi.day,
-      hour: result.gan_zhi.hour,
-      wu_xing: result.wu_xing,
-      shi_shen: result.shi_shen,
-      da_yun: result.da_yun,
-      liu_yue: result.liu_yue
-    };
-  } catch (error) {
-    console.error('Bazi core calculation error:', error);
-    return {
-      year: '甲子',
-      month: '乙丑',
-      day: '丙寅',
-      hour: '丁卯'
-    };
-  }
+  gender: 'male' | 'female',
+  longitude?: number,
+  latitude?: number
+): BaziResult {
+  const input: BaziInput = {
+    year,
+    month,
+    day,
+    hour,
+    gender,
+    longitude,
+    latitude,
+    timezone: 8
+  };
+  
+  const result = getBazi(input);
+  
+  return {
+    year: result.gan_zhi.year,
+    month: result.gan_zhi.month,
+    day: result.gan_zhi.day,
+    hour: result.gan_zhi.hour,
+    wu_xing: result.wu_xing,
+    shi_shen: result.shi_shen,
+    da_yun: result.da_yun,
+    liu_yue: result.liu_yue
+  };
 }
 
-function formatForAI(bazi: any): string {
-  return `年柱：${bazi.year}\n月柱：${bazi.month}\n日柱：${bazi.day}\n时柱：${bazi.hour}`;
+function formatForAI(bazi: BaziResult, locationInfo: string = ''): string {
+  const pillars = [
+    `年柱 (Year): ${bazi.year}`,
+    `月柱 (Month): ${bazi.month}`,
+    `日柱 (Day): ${bazi.day}`,
+    `时柱 (Hour): ${bazi.hour}`
+  ].join('\n');
+  
+  const elements = bazi.wu_xing ? `\n五行 (Elements): ${bazi.wu_xing.join(', ')}` : '';
+  const shishen = bazi.shi_shen ? `\n十神 (Ten Gods): ${bazi.shi_shen.join(', ')}` : '';
+  
+  return `${pillars}${elements}${shishen}${locationInfo}`;
 }
 
 import { getAiInterpretation } from '../utils/openai';
@@ -105,7 +109,7 @@ router.post('/', optionalAuth, async (req: AuthRequest<BaziRequest>, res: any) =
       return res.status(400).json({ error: 'Invalid input', details: errors });
     }
 
-    const { year, month, day, hour, longitude, latitude, gender = 'male' } = req.body;
+    const { year, month, day, hour, gender = 'male', longitude = 120, latitude = 30 } = req.body;
 
     if (!hasValidToken) {
       if (lastFreeDate === today && freeCookie === 'used') {
@@ -116,8 +120,11 @@ router.post('/', optionalAuth, async (req: AuthRequest<BaziRequest>, res: any) =
         });
       }
       
-      const bazi = calculateBaziCore(year, month, day, hour, longitude, latitude, gender);
-      const aiPrompt = formatForAI(bazi);
+      const bazi = calculateBaziCore(year, month, day, hour, gender, longitude, latitude);
+      
+      // Format additional info for AI about location used
+      const locationInfo = `\n出生位置: 经度${longitude}°, 纬度${latitude}° (用于计算真太阳时)`;
+      const aiPrompt = formatForAI(bazi, locationInfo);
       const interpretation = await getAiInterpretation(aiPrompt);
 
       res.cookie('bazi_free', 'used', { httpOnly: true, maxAge: 24 * 60 * 60 * 1000, sameSite: 'lax' });
@@ -152,8 +159,9 @@ router.post('/', optionalAuth, async (req: AuthRequest<BaziRequest>, res: any) =
       await user.save();
     }
 
-    const bazi = calculateBaziCore(year, month, day, hour, longitude, latitude, gender);
-    const aiPrompt = formatForAI(bazi);
+    const bazi = calculateBaziCore(year, month, day, hour, gender, longitude, latitude);
+    const locationInfo = `\n出生位置: 经度${longitude}°, 纬度${latitude}° (用于计算真太阳时)`;
+    const aiPrompt = formatForAI(bazi, locationInfo);
     const interpretation = await getAiInterpretation(aiPrompt);
 
     res.json({
@@ -164,6 +172,7 @@ router.post('/', optionalAuth, async (req: AuthRequest<BaziRequest>, res: any) =
         creditsUsed,
         creditsRemaining: isSubscribed ? -1 : user.credits,
         isSubscribed,
+        location: { longitude, latitude },
       },
     });
   } catch (err) {

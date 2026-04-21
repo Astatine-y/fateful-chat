@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Logo } from '@/components/Logo';
 
 interface SubscriptionStatus {
   isSubscribed: boolean;
@@ -281,7 +282,7 @@ export default function SubscriptionPage() {
   return (
     <div className="subscription-page">
       <nav className="nav-bar">
-        <Link href="/" className="nav-logo">☯ FATEFUL</Link>
+        <Logo size="sm" />
         <Link href="/dashboard" className="nav-link">控制台</Link>
       </nav>
 

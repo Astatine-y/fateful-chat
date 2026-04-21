@@ -8,7 +8,24 @@ export interface BaziInput {
   day: number;      // 出生日期 (1-31)
   hour: number;     // 出生时辰 (0-23)
   gender: 'male' | 'female';  // 性别
+  longitude?: number; // 出生地经度 (用于计算真太阳时)
+  latitude?: number;  // 出生地纬度
   timezone?: number; // 时区 (默认8 = UTC+8)
+}
+
+export function calculateTimezone(longitude: number): number {
+  // Timezone = 经度 / 15 (每15度一个时区)
+  // 中国大致在东经73-135度，时区UTC+8
+  const tz = Math.round(longitude / 15);
+  return Math.max(-12, Math.min(14, tz));
+}
+
+export function longToSolarTime(hour: number, longitude: number, standardLongitude: number = 120): number {
+  // 将地方时转换为真太阳时
+  // 经度差 = (当地经度 - 标准经度) * 4分钟/度
+  const diffMinutes = (longitude - standardLongitude) * 4;
+  const solarHour = hour + diffMinutes / 60;
+  return Math.max(0, Math.min(23, solarHour));
 }
 
 export interface BaziOutput {

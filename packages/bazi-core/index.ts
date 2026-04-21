@@ -1,4 +1,4 @@
-import { BaziInput, BaziOutput, GanZhi, WuXing, ShiShen } from './src/types';
+import { BaziInput, BaziOutput, GanZhi, WuXing, ShiShen, calculateTimezone, longToSolarTime } from './src/types';
 import { calculateShiShenSet } from './src/shishen';
 import { calculateDaYun } from './src/dayun';
 import { analyzeYearlyFortune } from './src/liuyue';
@@ -20,9 +20,18 @@ export function getBazi(input: BaziInput): BaziOutput {
   try {
     validateInput(input);
 
-    const { year, month, day, hour, gender, timezone = 8 } = input;
+    const { year, month, day, hour, gender, longitude, timezone = 8 } = input;
+    
+    // 根据经度计算当地时区 (用于真太阳时计算)
+    // 如果提供了经度，使用它来计算准确的时区
+    // 默认使用东经120度 (北京时间)
+    const actualLongitude = longitude ?? 120;
+    const actualTimezone = calculateTimezone(actualLongitude);
+    
+    // 将出生时间 (地方时) 转换为标准时区时间
+    const adjustedHour = longToSolarTime(hour, actualLongitude, 120);
 
-    const cacheKey = `${year}-${month}-${day}`;
+    const cacheKey = `${year}-${month}-${day}-${actualLongitude}`;
     let lunarBirth = lunarCache.get(cacheKey);
 
     if (!lunarBirth) {
@@ -37,7 +46,7 @@ export function getBazi(input: BaziInput): BaziOutput {
       lunarCache.set(cacheKey, lunarBirth);
     }
 
-    const realHour = calcRealHour(hour, lunarBirth.month, lunarBirth.day, timezone);
+    const realHour = calcRealHour(adjustedHour, lunarBirth.month, lunarBirth.day, actualTimezone);
     const ganZhi = {
       year: calcGanZhiYear(lunarBirth.year),
       month: calcGanZhiMonth(lunarBirth.year, lunarBirth.month),
@@ -213,3 +222,4 @@ export { solarToLunar } from './src/lunar';
 export { calculateShiShenSet, getElementalRelationship } from './src/shishen';
 export { calculateDaYun, analyzeDaYunQuality } from './src/dayun';
 export { analyzeYearlyFortune, getYearGanZhi, getMonthGanZhi } from './src/liuyue';
+export { calculateTimezone, longToSolarTime } from './src/types';
