@@ -27,10 +27,10 @@ jobs:
         run: npm install -g @railway/cli
           
       - name: Login Railway
-        run: railway login --interactive=false --token=${{ secrets.RAILWAY_TOKEN }}
+        run: railway login --token ${{ secrets.RAILWAY_TOKEN }}
          
       - name: Deploy to Railway
-        run: railway up --detach --token=${{ secrets.RAILWAY_TOKEN }}
+        run: railway up --detach --token ${{ secrets.RAILWAY_TOKEN }}
          
       - name: Wait for deployment
         run: sleep 30
