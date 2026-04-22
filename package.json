@@ -7,7 +7,7 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "turbo build",
+    "build": "npm run build --workspace=@fateful-chat/bazi-core && npm run build --workspace=apps/api",
     "dev": "turbo dev",
     "lint": "turbo lint",
     "test": "turbo test",
