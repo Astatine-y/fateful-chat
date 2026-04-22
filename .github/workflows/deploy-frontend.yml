@@ -33,5 +33,5 @@ jobs:
       - name: Vercel Deploy
         run: |
           npm i -g vercel@latest
-          vercel --prod --token=${{ secrets.VERCEL_TOKEN }} --yes
+          vercel --prod --token=${{ secrets.VERCEL_TOKEN }} --org=govai --project=fateful-chat --yes
         working-directory: apps/web
