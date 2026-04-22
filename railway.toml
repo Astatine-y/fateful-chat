@@ -3,7 +3,7 @@ builder = "NIXPACKS"
 buildCommand = "npm install && npm run build --workspace=apps/api"
 
 [deploy]
-startCommand = "npm run start"
+startCommand = "npm run start --workspace=apps/api"
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10
 
