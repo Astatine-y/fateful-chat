@@ -53,7 +53,7 @@ export default function HomePage() {
 
         <div className="cta-container">
           <Link href="/bazi" className="btn-primary">
-            <span className="btn-zh">开启你的生命代码</span>
+            <span className="btn-zh">探索你的命运</span>
             <span className="btn-en">Reveal Your Life Code</span>
           </Link>
           <p className="cta-note">无需注册 · 每日免费测算</p>
