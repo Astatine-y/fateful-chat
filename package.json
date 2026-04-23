@@ -3,16 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "workspaces": [
-    "apps/*",
-    "packages/*"
+    "apps/*"
   ],
   "scripts": {
-    "build": "npm run build --workspace=@fateful-chat/bazi-core && npm run build --workspace=apps/api",
-    "dev": "turbo dev",
-    "lint": "turbo lint",
-    "test": "turbo test",
-    "deploy": "bash deploy.sh",
-    "deploy:win": "powershell -File deploy.ps1"
+    "build": "npm run build --workspace=apps/api",
+    "dev": "npm run dev --workspace=apps/api"
   },
   "devDependencies": {
     "turbo": "^1.10.0"

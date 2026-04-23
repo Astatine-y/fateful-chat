@@ -1,7 +1,7 @@
 // apps/api/src/routes/bazi.ts
 import { Router } from 'express';
 import jwt from 'jsonwebtoken';
-import { getBazi, BaziInput, BaziOutput } from '@fateful-chat/bazi-core';
+import { getBazi, BaziInput, BaziOutput } from '../utils/bazi';
 
 interface BaziResult {
   year: string;
