@@ -8,16 +8,15 @@ interface BaziResult {
   hour: string;
 }
 
-
-if (!config.openai.apiKey) {
-  throw new Error('OPENAI_API_KEY is not configured');
-}
-
-const openai = new OpenAI({
+const openai = config.openai.apiKey ? new OpenAI({
   apiKey: config.openai.apiKey,
-});
+}) : null;
 
 export async function getAiInterpretation(bazi: BaziResult | string): Promise<string> {
+  if (!openai) {
+    return 'AI interpretation not available. Please configure OPENAI_API_KEY.';
+  }
+
   try {
     let prompt: string;
     
