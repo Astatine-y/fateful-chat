@@ -1,5 +1,4 @@
-// apps/api/src/utils/bazi.ts
-// Inlined bazi-core to avoid workspace build issues
+// Bazi calculation utility - inlined to avoid workspace issues
 
 export type GanZhi = string;
 export type WuXing = '木' | '火' | '土' | '金' | '水';
