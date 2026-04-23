@@ -3,17 +3,14 @@ import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import HttpBackend from 'i18next-http-backend';
 
-export const initializeI18n = () => {
-  if (i18n.isInitialized) {
-    return;
-  }
-
+if (!i18n.isInitialized) {
   i18n
     .use(HttpBackend)
     .use(LanguageDetector)
     .use(initReactI18next)
     .init({
-      fallbackLng: 'en',
+      fallbackLng: 'zh-CN',
+      lng: 'zh-CN',
       defaultNS: 'common',
       ns: ['common', 'bazi', 'dashboard', 'auth'],
       backend: {
@@ -26,8 +23,10 @@ export const initializeI18n = () => {
         order: ['localStorage', 'cookie', 'navigator'],
         caches: ['localStorage', 'cookie'],
       },
+      react: {
+        useSuspense: false,
+      },
     });
-};
+}
 
 export default i18n;
-
