@@ -1,38 +1,31 @@
 [build]
-builder = "NIXPACKS"
+builder = "nixpacks"
 buildCommand = "npm install && npm run build"
+
+[nixpacks]
+nodeVersion = "20"
 
 [deploy]
 startCommand = "npm run start --workspace=apps/api"
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10
 
-# Required Environment Variables
 MONGODB_URI = "${MONGODB_URI}"
 JWT_SECRET = "${JWT_SECRET}"
 OPENAI_API_KEY = "${OPENAI_API_KEY}"
-
-# Stripe
+OLLAMA_URL = "${OLLAMA_URL}"
 STRIPE_SECRET_KEY = "${STRIPE_SECRET_KEY}"
 STRIPE_PUBLISHABLE_KEY = "${STRIPE_PUBLISHABLE_KEY}"
 STRIPE_WEBHOOK_SECRET = "${STRIPE_WEBHOOK_SECRET}"
 STRIPE_MONTHLY_PRICE_ID = "${STRIPE_MONTHLY_PRICE_ID}"
 STRIPE_YEARLY_PRICE_ID = "${STRIPE_YEARLY_PRICE_ID}"
-
-# Google OAuth
 GOOGLE_CLIENT_ID = "${GOOGLE_CLIENT_ID}"
 GOOGLE_CLIENT_SECRET = "${GOOGLE_CLIENT_SECRET}"
 GOOGLE_CALLBACK_URL = "${GOOGLE_CALLBACK_URL}"
-
-# Apple OAuth
 APPLE_CLIENT_ID = "${APPLE_CLIENT_ID}"
 APPLE_CLIENT_SECRET = "${APPLE_CLIENT_SECRET}"
 APPLE_TEAM_ID = "${APPLE_TEAM_ID}"
 APPLE_KEY_ID = "${APPLE_KEY_ID}"
-
-# Frontend URL
 FRONTEND_URL = "${FRONTEND_URL}"
-
-# Server
-PORT = "5000"
+PORT = "8080"
 NODE_ENV = "production"

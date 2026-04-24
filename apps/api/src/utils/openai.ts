@@ -44,7 +44,7 @@ async function getOllamaInterpretation(bazi: BaziResult | string): Promise<strin
       throw new Error('Ollama request failed');
     }
 
-    const data = await response.json();
+    const data = await response.json() as { response?: string };
     return data.response || 'Ollama返回为空';
   } catch (error) {
     console.error('Ollama error:', error);
