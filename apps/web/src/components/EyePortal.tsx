@@ -37,6 +37,8 @@ export function EyePortal({ onSubmit, loading = false }: EyePortalProps) {
     const nextIndex = (langIndex + 1) % languages.length;
     setLangIndex(nextIndex);
     i18n.changeLanguage(languages[nextIndex].code);
+    // Force re-render by toggling key
+    setActiveField(activeField ? null : 'lang');
   };
   
   const currentLang = languages[langIndex];

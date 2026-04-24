@@ -122,10 +122,14 @@ router.post('/', optionalAuth, async (req: AuthRequest<BaziRequest>, res: any) =
       
       const bazi = calculateBaziCore(year, month, day, hour, gender, longitude, latitude);
       
-      // Format additional info for AI about location used
-      const locationInfo = `\n出生位置: 经度${longitude}°, 纬度${latitude}° (用于计算真太阳时)`;
-      const aiPrompt = formatForAI(bazi, locationInfo);
-      const interpretation = await getAiInterpretation(aiPrompt);
+      let interpretation = 'Please configure OPENAI_API_KEY for AI interpretation.';
+      try {
+        const locationInfo = `\n出生位置: 经度${longitude}°, 纬度${latitude}° (用于计算真太阳时)`;
+        const aiPrompt = formatForAI(bazi, locationInfo);
+        interpretation = await getAiInterpretation(aiPrompt);
+      } catch (err) {
+        console.error('AI interpretation failed:', err);
+      }
 
       res.cookie('bazi_free', 'used', { httpOnly: true, maxAge: 24 * 60 * 60 * 1000, sameSite: 'lax' });
       res.cookie('bazi_date', today, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000, sameSite: 'lax' });
@@ -160,9 +164,14 @@ router.post('/', optionalAuth, async (req: AuthRequest<BaziRequest>, res: any) =
     }
 
     const bazi = calculateBaziCore(year, month, day, hour, gender, longitude, latitude);
-    const locationInfo = `\n出生位置: 经度${longitude}°, 纬度${latitude}° (用于计算真太阳时)`;
-    const aiPrompt = formatForAI(bazi, locationInfo);
-    const interpretation = await getAiInterpretation(aiPrompt);
+    let interpretation = 'AI interpretation unavailable. Configure OPENAI_API_KEY for personalized insights.';
+    try {
+      const locationInfo = `\n出生位置: 经度${longitude}°, 纬度${latitude}° (用于计算真太阳时)`;
+      const aiPrompt = formatForAI(bazi, locationInfo);
+      interpretation = await getAiInterpretation(aiPrompt);
+    } catch (err) {
+      console.error('AI interpretation error:', err);
+    }
 
     res.json({
       success: true,
