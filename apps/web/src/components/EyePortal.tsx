@@ -382,13 +382,30 @@ const allFieldsSelected = year && month && day && hour;
           opacity: 0.7;
         }
 
-        .portal-container {
+.portal-container {
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          min-height: 70vh;
+          min-height: calc(100vh - 120px);
+          padding: 20px 0;
+        }
+
+        .eye-wrapper {
           position: relative;
+          width: 280px;
+          height: 280px;
+          margin: 40px auto;
+        }
+
+        .field-selectors {
+          position: absolute;
+          width: 360px;
+          height: 360px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-top: 20px;
         }
 
         .eye-wrapper {
@@ -400,13 +417,15 @@ const allFieldsSelected = year && month && day && hour;
 
         .eye-outer {
           position: absolute;
-          inset: 0;
+          width: 280px;
+          height: 280px;
+          inset: auto;
           border-radius: 50%;
           background: linear-gradient(135deg, rgba(124, 58, 237, 0.2) 0%, rgba(79, 70, 229, 0.3) 50%, rgba(124, 58, 237, 0.2) 100%);
           border: 3px solid rgba(167, 139, 250, 0.5);
           box-shadow: 
-            0 0 60px rgba(124, 58, 237, 0.3),
-            inset 0 0 60px rgba(124, 58, 237, 0.2);
+            0 0 80px rgba(124, 58, 237, 0.4),
+            inset 0 0 80px rgba(124, 58, 237, 0.3);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -425,8 +444,8 @@ const allFieldsSelected = year && month && day && hour;
         }
 
         .iris {
-          width: 160px;
-          height: 160px;
+          width: 200px;
+          height: 200px;
           border-radius: 50%;
           background: radial-gradient(circle at 40% 40%, 
             rgba(34, 211, 216, 0.8) 0%,
@@ -437,20 +456,20 @@ const allFieldsSelected = year && month && day && hour;
           align-items: center;
           justify-content: center;
           transition: all 0.5s ease;
-          box-shadow: 0 0 40px rgba(34, 211, 216, 0.5);
+          box-shadow: 0 0 50px rgba(34, 211, 216, 0.6);
         }
 
         .iris.focused {
           transform: scale(1.1);
-          box-shadow: 0 0 60px rgba(251, 191, 36, 0.6);
+          box-shadow: 0 0 80px rgba(251, 191, 36, 0.7);
         }
 
         .pupil {
-          width: 80px;
-          height: 80px;
+          width: 100px;
+          height: 100px;
           border-radius: 50%;
           background: radial-gradient(circle at 30% 30%, #030014 0%, #1a0a30 100%);
-          box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+          box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.8);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -629,14 +648,15 @@ const allFieldsSelected = year && month && day && hour;
           flex-direction: column;
           align-items: center;
           gap: 4px;
-          width: 200px;
-          padding: 18px 32px;
+          width: 220px;
+          padding: 20px 40px;
           background: rgba(26, 22, 53, 0.8);
           border: 2px solid var(--border);
           border-radius: 50px;
           color: var(--foreground);
           cursor: pointer;
           transition: all 0.4s ease;
+          margin-top: 40px;
           z-index: 5;
         }
 
