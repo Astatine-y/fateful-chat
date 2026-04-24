@@ -21,6 +21,14 @@ const resources = {
       day: '日',
       hour: '时',
       dashboard: '控制台',
+      monthSuffix: '月',
+      hourSuffix: ':00',
+      yearPillar: '年柱',
+      monthPillar: '月柱',
+      dayPillar: '日柱',
+      hourPillar: '时柱',
+      aiInterpretation: 'AI解读',
+      exploreAgain: '再探命运',
     }
   },
   'en': {
@@ -39,6 +47,14 @@ const resources = {
       day: 'Day',
       hour: 'Hour',
       dashboard: 'Dashboard',
+      monthSuffix: '',
+      hourSuffix: ':00',
+      yearPillar: 'Year Pillar',
+      monthPillar: 'Month Pillar',
+      dayPillar: 'Day Pillar',
+      hourPillar: 'Hour Pillar',
+      aiInterpretation: 'AI Interpretation',
+      exploreAgain: 'Explore Again',
     }
   },
   'ja': {
@@ -57,6 +73,14 @@ const resources = {
       day: '日',
       hour: '時',
       dashboard: 'ダッシュボード',
+      monthSuffix: '月',
+      hourSuffix: ':00',
+      yearPillar: '年柱',
+      monthPillar: '月柱',
+      dayPillar: '日柱',
+      hourPillar: '時柱',
+      aiInterpretation: 'AI解釈',
+      exploreAgain: 'もう一度',
     }
   },
   'ko': {
@@ -75,6 +99,14 @@ const resources = {
       day: '일',
       hour: '시',
       dashboard: '대시보드',
+      monthSuffix: '월',
+      hourSuffix: ':00',
+      yearPillar: '년주',
+      monthPillar: '월주',
+      dayPillar: '일주',
+      hourPillar: '시주',
+      aiInterpretation: 'AI 해석',
+      exploreAgain: '다시 탐색',
     }
   },
   'es': {
@@ -93,6 +125,14 @@ const resources = {
       day: 'Día',
       hour: 'Hora',
       dashboard: 'Panel',
+      monthSuffix: '',
+      hourSuffix: ':00',
+      yearPillar: 'Pilar Año',
+      monthPillar: 'Pilar Mes',
+      dayPillar: 'Pilar Día',
+      hourPillar: 'Pilar Hora',
+      aiInterpretation: 'Interpretación IA',
+      exploreAgain: 'Explorar de nuevo',
     }
   },
   'fr': {
@@ -111,6 +151,14 @@ const resources = {
       day: 'Jour',
       hour: 'Heure',
       dashboard: 'Tableau de bord',
+      monthSuffix: '',
+      hourSuffix: ':00',
+      yearPillar: 'Pilier Année',
+      monthPillar: 'Pilier Mois',
+      dayPillar: 'Pilier Jour',
+      hourPillar: 'Pilier Heure',
+      aiInterpretation: 'Interprétation IA',
+      exploreAgain: 'Explorer à nouveau',
     }
   },
   'vi': {
@@ -129,6 +177,14 @@ const resources = {
       day: 'Ngày',
       hour: 'Giờ',
       dashboard: 'Bảng điều khiển',
+      monthSuffix: '',
+      hourSuffix: ':00',
+      yearPillar: 'Cột Năm',
+      monthPillar: 'Cột Tháng',
+      dayPillar: 'Cột Ngày',
+      hourPillar: 'Cột Giờ',
+      aiInterpretation: 'Giải mã AI',
+      exploreAgain: 'Khám phá lại',
     }
   },
   'th': {
@@ -147,6 +203,14 @@ const resources = {
       day: 'วัน',
       hour: 'ชั่วโมง',
       dashboard: 'แดชบอร์ด',
+      monthSuffix: '',
+      hourSuffix: ':00',
+      yearPillar: 'เสาปี',
+      monthPillar: 'เสาเดือน',
+      dayPillar: 'เสาวัน',
+      hourPillar: 'เสาชั่วโมง',
+      aiInterpretation: 'ตีความ AI',
+      exploreAgain: 'สำรวจอีกครั้ง',
     }
   },
   'id': {
@@ -165,6 +229,14 @@ const resources = {
       day: 'Hari',
       hour: 'Jam',
       dashboard: 'Dasbor',
+      monthSuffix: '',
+      hourSuffix: ':00',
+      yearPillar: 'Pilar Tahun',
+      monthPillar: 'Pilar Bulan',
+      dayPillar: 'Pilar Hari',
+      hourPillar: 'Pilar Jam',
+      aiInterpretation: 'Interpretasi AI',
+      exploreAgain: 'Jelajahi lagi',
     }
   },
 };

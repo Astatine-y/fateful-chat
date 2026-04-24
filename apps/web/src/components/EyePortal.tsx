@@ -178,7 +178,7 @@ const allFieldsSelected = year && month && day && hour;
                         setActiveField(null);
                       }}
                     >
-                      {m}月
+                      {m}{t('monthSuffix', { defaultValue: '' })}
                     </button>
                   ))}
                 </div>
@@ -220,7 +220,7 @@ const allFieldsSelected = year && month && day && hour;
                         setActiveField(null);
                       }}
                     >
-                      {h}:00
+                      {h}{t('hourSuffix', { defaultValue: ':00' })}
                     </button>
                   ))}
                 </div>
@@ -239,7 +239,7 @@ const allFieldsSelected = year && month && day && hour;
                       setActiveField(null);
                     }}
                   >
-                    ♂ 男
+                    ♂ {t('male', { defaultValue: '男' })}
                   </button>
                   <button
                     className={`scroll-item ${gender === 'female' ? 'selected' : ''}`}
@@ -249,7 +249,7 @@ const allFieldsSelected = year && month && day && hour;
                       setActiveField(null);
                     }}
                   >
-                    ♀ 女
+                    ♀ {t('female', { defaultValue: '女' })}
                   </button>
                 </div>
               </div>

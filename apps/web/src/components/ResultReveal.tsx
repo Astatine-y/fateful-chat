@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface BaziResult {
   bazi: {
@@ -18,8 +19,11 @@ interface ResultRevealProps {
 }
 
 export function ResultReveal({ result, onClose }: ResultRevealProps) {
+  const { t, i18n } = useTranslation();
   const [phase, setPhase] = useState<'opening' | 'reading' | 'revealed'>('opening');
   const [revealProgress, setRevealProgress] = useState(0);
+  
+  const pillarKeys = ['yearPillar', 'monthPillar', 'dayPillar', 'hourPillar'];
 
   useEffect(() => {
     // Phase 1: Eye opens
@@ -38,12 +42,10 @@ export function ResultReveal({ result, onClose }: ResultRevealProps) {
     }, 1500);
   }, []);
 
-  const pillars = [
-    { label: '年', en: 'Year', value: result.bazi.year },
-    { label: '月', en: 'Month', value: result.bazi.month },
-    { label: '日', en: 'Day', value: result.bazi.day },
-    { label: '时', en: 'Hour', value: result.bazi.hour },
-  ];
+  const pillars = pillarKeys.map((key, index) => ({
+    label: t(key),
+    value: Object.values(result.bazi)[index]
+  }));
 
   return (
     <div className="result-reveal">
@@ -69,8 +71,7 @@ export function ResultReveal({ result, onClose }: ResultRevealProps) {
                 } as any}
               >
                 <div className="pillar-label">
-                  <span className="zh">{pillar.label}柱</span>
-                  <span className="en">{pillar.en}</span>
+                  {pillar.label}
                 </div>
                 <div className="pillar-value">{pillar.value}</div>
               </div>
@@ -83,7 +84,7 @@ export function ResultReveal({ result, onClose }: ResultRevealProps) {
       {phase === 'revealed' && (
         <div className="interpretation-section">
           <div className="scan-line" />
-          <h3>◈ AI解读</h3>
+          <h3>◈ {t('aiInterpretation', { defaultValue: 'AI解读' })}</h3>
           <div className="interpretation-text">
             {result.interpretation}
           </div>
@@ -93,8 +94,7 @@ export function ResultReveal({ result, onClose }: ResultRevealProps) {
       {/* Close / Throw back button */}
       {phase === 'revealed' && (
         <button className="throw-btn" onClick={onClose}>
-          <span className="zh">再探命运</span>
-          <span className="en">Explore Again</span>
+          {t('exploreAgain', { defaultValue: '再探命运' })}
         </button>
       )}
 
