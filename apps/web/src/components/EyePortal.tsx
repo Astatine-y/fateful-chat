@@ -19,13 +19,27 @@ interface EyePortalProps {
 export function EyePortal({ onSubmit, loading = false }: EyePortalProps) {
   const { t, i18n } = useTranslation();
   const [activeField, setActiveField] = useState<string | null>(null);
-  const [isZh, setIsZh] = useState(true);
+  const [langIndex, setLangIndex] = useState(0);
+  
+  const languages = [
+    { code: 'zh-CN', label: '中' },
+    { code: 'en', label: 'EN' },
+    { code: 'ja', label: '日' },
+    { code: 'ko', label: '한' },
+    { code: 'es', label: 'ES' },
+    { code: 'fr', label: 'FR' },
+    { code: 'vi', label: 'VN' },
+    { code: 'th', label: 'TH' },
+    { code: 'id', label: 'ID' },
+  ];
   
   const toggleLanguage = () => {
-    const newLang = isZh ? 'en' : 'zh-CN';
-    setIsZh(!isZh);
-    i18n.changeLanguage(newLang);
+    const nextIndex = (langIndex + 1) % languages.length;
+    setLangIndex(nextIndex);
+    i18n.changeLanguage(languages[nextIndex].code);
   };
+  
+  const currentLang = languages[langIndex];
   
   const [year, setYear] = useState('');
   const [month, setMonth] = useState('');
@@ -87,10 +101,10 @@ const allFieldsSelected = year && month && day && hour;
         <Logo size="md" />
         <div className="nav-right">
           <button onClick={toggleLanguage} className="lang-toggle">
-            {isZh ? 'EN' : '中'}
+            {currentLang.label}
           </button>
           <Link href="/dashboard" className="nav-link">
-            {isZh ? '控制台' : 'Dashboard'}
+            {currentLang.code === 'zh-CN' ? '控制台' : 'Dashboard'}
           </Link>
         </div>
       </nav>
