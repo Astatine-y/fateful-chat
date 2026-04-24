@@ -53,7 +53,10 @@ function BaziPageContent() {
         }),
       });
 
+      console.log('Bazi API response status:', response.status);
+      
       const responseData = await response.json();
+      console.log('Bazi API response:', responseData);
 
       if (!response.ok) {
         if (response.status === 429) {
@@ -64,13 +67,18 @@ function BaziPageContent() {
         throw new Error(responseData.error || 'Failed to calculate');
       }
 
-      // Store result if logged in
-      if (responseData.data?.creditsRemaining !== undefined) {
-        setResult(responseData.data);
-      }
+      // Extract data from response - handle both { success: true, data: {...} } and direct data formats
+      const resultData = responseData.data || responseData;
       
-      // Show result modal
-      setShowResult(true);
+      // Store result if logged in or free user
+      if (resultData.bazi) {
+        setResult({
+          bazi: resultData.bazi,
+          interpretation: resultData.interpretation || 'No interpretation available',
+          creditsRemaining: resultData.creditsRemaining ?? 0,
+        });
+        setShowResult(true);
+      }
     } catch (err) {
       console.error('Bazi calculation error:', err);
     } finally {
