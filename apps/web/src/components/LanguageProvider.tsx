@@ -171,10 +171,13 @@ const resources = {
 
 i18n.init({
   resources,
-  lng: 'zh-CN',
+  lng: localStorage.getItem('i18nextLng') || 'zh-CN',
   fallbackLng: 'zh-CN',
   interpolation: {
     escapeValue: false,
+  },
+  react: {
+    useSuspense: false,
   },
 });
 

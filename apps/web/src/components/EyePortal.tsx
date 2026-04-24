@@ -19,7 +19,6 @@ interface EyePortalProps {
 export function EyePortal({ onSubmit, loading = false }: EyePortalProps) {
   const { t, i18n } = useTranslation();
   const [activeField, setActiveField] = useState<string | null>(null);
-  const [langIndex, setLangIndex] = useState(0);
   
   const languages = [
     { code: 'zh-CN', label: '中' },
@@ -33,11 +32,16 @@ export function EyePortal({ onSubmit, loading = false }: EyePortalProps) {
     { code: 'id', label: 'ID' },
   ];
   
+  const savedLang = typeof window !== 'undefined' ? localStorage.getItem('i18nextLng') || 'zh-CN' : 'zh-CN';
+  const initialIndex = languages.findIndex(l => l.code === savedLang);
+  const [langIndex, setLangIndex] = useState(initialIndex >= 0 ? initialIndex : 0);
+  
   const toggleLanguage = () => {
     const nextIndex = (langIndex + 1) % languages.length;
     setLangIndex(nextIndex);
-    i18n.changeLanguage(languages[nextIndex].code);
-    // Force re-render by toggling key
+    const lang = languages[nextIndex].code;
+    i18n.changeLanguage(lang);
+    localStorage.setItem('i18nextLng', lang);
     setActiveField(activeField ? null : 'lang');
   };
   
@@ -106,7 +110,7 @@ const allFieldsSelected = year && month && day && hour;
             {currentLang.label}
           </button>
           <Link href="/dashboard" className="nav-link">
-            {currentLang.code === 'zh-CN' ? '控制台' : 'Dashboard'}
+            {t('dashboard', { defaultValue: 'Dashboard' })}
           </Link>
         </div>
       </nav>
@@ -137,7 +141,7 @@ const allFieldsSelected = year && month && day && hour;
           <div className={`input-panel ${activeField ? 'active' : ''}`}>
             {activeField === 'year' && (
               <div className="scroller year-scroller">
-                <h3>选择年份</h3>
+                <h3>{t('selectYear', { defaultValue: 'Select Year' })}</h3>
                 <div className="scroll-track">
                   {years.map(y => (
                     <button
@@ -158,7 +162,7 @@ const allFieldsSelected = year && month && day && hour;
 
             {activeField === 'month' && (
               <div className="scroller month-scroller">
-                <h3>选择月份</h3>
+                <h3>{t('selectMonth', { defaultValue: 'Select Month' })}</h3>
                 <div className="scroll-track">
                   {months.map(m => (
                     <button
@@ -179,7 +183,7 @@ const allFieldsSelected = year && month && day && hour;
 
             {activeField === 'day' && (
               <div className="scroller day-scroller">
-                <h3>选择日期</h3>
+                <h3>{t('selectDay', { defaultValue: 'Select Day' })}</h3>
                 <div className="scroll-track">
                   {days.map(d => (
                     <button
@@ -200,7 +204,7 @@ const allFieldsSelected = year && month && day && hour;
 
             {activeField === 'hour' && (
               <div className="scroller hour-scroller">
-                <h3>选择时辰</h3>
+                <h3>{t('selectHour', { defaultValue: 'Select Hour' })}</h3>
                 <div className="scroll-track">
                   {hours.map(h => (
                     <button
@@ -221,7 +225,7 @@ const allFieldsSelected = year && month && day && hour;
 
             {activeField === 'gender' && (
               <div className="scroller gender-scroller">
-                <h3>选择性别</h3>
+                <h3>{t('gender', { defaultValue: 'Select Gender' })}</h3>
                 <div className="scroll-track">
                   <button
                     className={`scroll-item ${gender === 'male' ? 'selected' : ''}`}
@@ -308,10 +312,7 @@ const allFieldsSelected = year && month && day && hour;
               <span>.</span><span>.</span><span>.</span>
             </span>
           ) : (
-            <>
-              <span className="zh">洞察命运</span>
-              <span className="en">Reveal Your Destiny</span>
-            </>
+            <span className="btn-text">{t('reveal', { defaultValue: 'Reveal Your Destiny' })}</span>
           )}
         </button>
 
@@ -395,37 +396,20 @@ const allFieldsSelected = year && month && day && hour;
           position: relative;
           width: 280px;
           height: 280px;
-          margin: 40px auto;
-        }
-
-        .field-selectors {
-          position: absolute;
-          width: 360px;
-          height: 360px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin-top: 20px;
-        }
-
-        .eye-wrapper {
-          position: relative;
-          width: 280px;
-          height: 280px;
           margin-bottom: 40px;
         }
 
         .eye-outer {
-          position: absolute;
-          width: 280px;
-          height: 280px;
-          inset: auto;
+          position: relative;
+          width: 220px;
+          height: 220px;
+          margin: 0 auto 60px;
           border-radius: 50%;
           background: linear-gradient(135deg, rgba(124, 58, 237, 0.2) 0%, rgba(79, 70, 229, 0.3) 50%, rgba(124, 58, 237, 0.2) 100%);
           border: 3px solid rgba(167, 139, 250, 0.5);
           box-shadow: 
-            0 0 80px rgba(124, 58, 237, 0.4),
-            inset 0 0 80px rgba(124, 58, 237, 0.3);
+            0 0 60px rgba(124, 58, 237, 0.3),
+            inset 0 0 60px rgba(124, 58, 237, 0.2);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -444,8 +428,8 @@ const allFieldsSelected = year && month && day && hour;
         }
 
         .iris {
-          width: 200px;
-          height: 200px;
+          width: 160px;
+          height: 160px;
           border-radius: 50%;
           background: radial-gradient(circle at 40% 40%, 
             rgba(34, 211, 216, 0.8) 0%,
@@ -456,20 +440,20 @@ const allFieldsSelected = year && month && day && hour;
           align-items: center;
           justify-content: center;
           transition: all 0.5s ease;
-          box-shadow: 0 0 50px rgba(34, 211, 216, 0.6);
+          box-shadow: 0 0 40px rgba(34, 211, 216, 0.5);
         }
 
         .iris.focused {
           transform: scale(1.1);
-          box-shadow: 0 0 80px rgba(251, 191, 36, 0.7);
+          box-shadow: 0 0 60px rgba(251, 191, 36, 0.6);
         }
 
         .pupil {
-          width: 100px;
-          height: 100px;
+          width: 70px;
+          height: 70px;
           border-radius: 50%;
           background: radial-gradient(circle at 30% 30%, #030014 0%, #1a0a30 100%);
-          box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.8);
+          box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
           display: flex;
           align-items: center;
           justify-content: center;
