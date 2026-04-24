@@ -32,9 +32,13 @@ export function EyePortal({ onSubmit, loading = false }: EyePortalProps) {
     { code: 'id', label: 'ID' },
   ];
   
-  const savedLang = typeof window !== 'undefined' ? localStorage.getItem('i18nextLng') || 'zh-CN' : 'zh-CN';
-  const initialIndex = languages.findIndex(l => l.code === savedLang);
-  const [langIndex, setLangIndex] = useState(initialIndex >= 0 ? initialIndex : 0);
+  const getInitialIndex = () => {
+    if (typeof window === 'undefined') return 0;
+    const saved = localStorage.getItem('i18nextLng') || 'zh-CN';
+    const idx = languages.findIndex(l => l.code === saved);
+    return idx >= 0 ? idx : 0;
+  };
+  const [langIndex, setLangIndex] = useState(getInitialIndex);
   
   const toggleLanguage = () => {
     const nextIndex = (langIndex + 1) % languages.length;

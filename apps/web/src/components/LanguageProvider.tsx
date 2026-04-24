@@ -171,7 +171,7 @@ const resources = {
 
 i18n.init({
   resources,
-  lng: localStorage.getItem('i18nextLng') || 'zh-CN',
+  lng: (typeof window !== 'undefined' ? localStorage.getItem('i18nextLng') : null) || 'zh-CN',
   fallbackLng: 'zh-CN',
   interpolation: {
     escapeValue: false,
