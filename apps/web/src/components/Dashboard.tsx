@@ -22,20 +22,25 @@ export default function Dashboard() {
 
   const fetchUserData = async () => {
     try {
+      const token = localStorage.getItem('token');
       const response = await fetch('/api/user/profile', {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${token}`,
         },
       });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch user data');
+        console.error('Profile fetch failed:', response.status);
+        setUser({ id: '', email: 'Guest', credits: 0 });
+        return;
       }
 
       const data = await response.json();
       setUser(data.data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      console.error('User data fetch error:', err);
+      // Set fallback user data instead of showing error
+      setUser({ id: '', email: 'Guest', credits: 0 });
     } finally {
       setLoading(false);
     }
