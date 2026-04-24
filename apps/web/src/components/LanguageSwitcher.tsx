@@ -21,18 +21,16 @@ export function LanguageSwitcher() {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    const saved = localStorage.getItem('language') || 'zh-CN';
+    const saved = localStorage.getItem('i18nextLng') || 'zh-CN';
     setCurrentLang(saved);
     i18n.changeLanguage(saved);
   }, []);
 
   const handleLanguageChange = (langCode: string) => {
     i18n.changeLanguage(langCode);
-    localStorage.setItem('language', langCode);
+    localStorage.setItem('i18nextLng', langCode);
     setCurrentLang(langCode);
     setIsOpen(false);
-    // Force page refresh to show new translations
-    window.location.reload();
   };
 
   const current = languages.find(l => l.code === currentLang) || languages[0];
