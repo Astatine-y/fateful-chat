@@ -19,9 +19,11 @@ interface EyePortalProps {
 export function EyePortal({ onSubmit, loading = false }: EyePortalProps) {
   const { t, i18n } = useTranslation();
   const [activeField, setActiveField] = useState<string | null>(null);
+  const [isZh, setIsZh] = useState(true);
   
   const toggleLanguage = () => {
-    const newLang = i18n.language === 'zh-CN' ? 'en' : 'zh-CN';
+    const newLang = isZh ? 'en' : 'zh-CN';
+    setIsZh(!isZh);
     i18n.changeLanguage(newLang);
   };
   
@@ -77,9 +79,7 @@ export function EyePortal({ onSubmit, loading = false }: EyePortalProps) {
     onSubmit({ year, month, day, hour, gender });
   };
 
-  const allFieldsSelected = year && month && day && hour;
-
-  const isZh = i18n.language === 'zh-CN';
+const allFieldsSelected = year && month && day && hour;
   
   return (
     <div className="eye-portal">
